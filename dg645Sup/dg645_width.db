@@ -1,0 +1,50 @@
+record(bo, "$(P)$(R)$(Q)SIM")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+    field(ZNAM, "NO")
+    field(ONAM, "YES")
+    field(VAL, "$(RECSIM=0)")
+}
+
+record(bo, "$(P)$(R)$(Q)DISABLE") 
+{
+    field(DESC, "Disable comms")
+    field(PINI, "YES")
+    field(VAL, "$(DISABLE=0)")
+    field(OMSL, "supervisory")
+    field(ZNAM, "COMMS ENABLED")
+    field(ONAM, "COMMS DISABLED")
+}
+
+record(calc,"$(P)$(R)$(Q)DelayWidthConvert")
+{
+    field(PINI, "YES")
+    field(DESC, "$(Q) width value convert")
+    field(SCAN, "Passive")
+    field(PREC, "12")
+    field(INPA, "$(P)$(R)$(Q)DelayWidth CP")
+    field(CALC, "(A>1)?A:((A*1e3>1)?A*1e3:((A*1e6>1)?A*1e6:((A*1e9>1)?A*1e9:A*1e12)))")
+}
+
+record(ai,"$(P)$(R)$(Q)DelayWidth:RB")
+{
+    field(DESC, "$(Q) width value output")
+    field(EGU, "")
+    field(SCAN, "Passive")
+    field(PREC, "8")
+    field(INP, "$(P)$(R)$(Q)DelayWidthConvert CP")
+    field(ASG, "READONLY")
+    info(INTEREST, "HIGH")
+}
+
+record(scalcout,"$(P)$(R)$(Q)DelayWidthUnit:RB")
+{
+    field(PINI, "YES")
+    field(DESC, "$(Q) width unit convert")
+    field(SCAN, "Passive")
+    field(INPA, "$(P)$(R)$(Q)DelayWidth CP")
+    field(CALC, "(A>1)?'s':((A*1e3>1)?'ms':((A*1e6>1)?'us':((A*1e9>1)?'ns':'ps')))")
+    field(ASG, "READONLY")
+    info(INTEREST, "HIGH")
+}

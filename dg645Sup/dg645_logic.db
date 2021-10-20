@@ -1,0 +1,121 @@
+record(bo, "$(P)$(R)$(Q)SIM")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+    field(ZNAM, "NO")
+    field(ONAM, "YES")
+    field(VAL, "$(RECSIM=0)")
+}
+
+record(bo, "$(P)$(R)$(Q)DISABLE") 
+{
+    field(DESC, "Disable comms")
+    field(PINI, "YES")
+    field(VAL, "$(DISABLE=0)")
+    field(OMSL, "supervisory")
+    field(ZNAM, "COMMS ENABLED")
+    field(ONAM, "COMMS DISABLED")
+}
+
+# Logic set
+
+record(mbbo,"$(P)$(R)$(Q)OutputPolarity:SP")
+{
+    field(DESC, "$(Q) polarity")
+    field(EGU, "")
+    field(SCAN, "Passive")
+    field(ZRST, "Negative")
+    field(ONST, "Positive")
+    field(ZRVL, "0")
+    field(ONVL, "1")
+    field(DTYP, "Soft Channel")
+    field(OUT, "$(P)$(R)$(Q)OutputPolarityBO")
+    field(FLNK, "$(P)$(R)$(Q)OutputPolarityBO")
+    info(dgconfig, "VAL")
+}
+
+record(seq,"$(P)$(R)$(Q)LogicTTL:SP")
+{
+    field(DESC, "$(Q) logic TTL")
+    field(SCAN, "Passive")
+    field(LNK1, "$(P)$(R)$(Q)OutputAmpAO")
+    field(LNK2, "$(P)$(R)$(Q)OutputOffsetAO")
+    field(DO1, "4")
+    field(DO2, "0")
+    field(FLNK, "$(P)$(R)$(Q)LogicTTLFanout")
+}
+
+record(fanout,"$(P)$(R)$(Q)LogicTTLFanout")
+{
+    field(DESC, "$(Q) logic TTL scan")
+    field(SCAN, "Passive")
+    field(LNK1, "$(P)$(R)$(Q)OutputAmpAO")
+    field(LNK2, "$(P)$(R)$(Q)OutputOffsetAO")
+}
+
+record(seq,"$(P)$(R)$(Q)LogicNIM:SP")
+{
+    field(DESC, "$(Q) logic NIM")
+    field(SCAN, "Passive")
+    field(LNK1, "$(P)$(R)$(Q)OutputAmpAO")
+    field(LNK2, "$(P)$(R)$(Q)OutputOffsetAO")
+    field(DO1, "0.8")
+    field(DO2, "-0.8")
+    field(FLNK, "$(P)$(R)$(Q)LogicNIMFanout")
+}
+
+record(fanout,"$(P)$(R)$(Q)LogicNIMFanout")
+{
+    field(DESC, "$(Q) logic NIM scan")
+    field(SCAN, "Passive")
+    field(LNK1, "$(P)$(R)$(Q)OutputAmpAO")
+    field(LNK2, "$(P)$(R)$(Q)OutputOffsetAO")
+}
+
+# Logic actual
+
+record(calc,"$(P)$(R)$(Q)LogicTTL:RB")
+{
+    field(DESC, "$(Q) check logic TTL")
+    field(SCAN, "Passive")
+    field(INPA, "$(P)$(R)$(Q)OutputAmpAI CP")
+    field(INPB, "$(P)$(R)$(Q)OutputOffsetAI CP")
+    field(CALC, "A=4&&B=0")
+    field(FLNK, "$(P)$(R)$(Q)LogicNR:RB")
+    field(ASG, "READONLY")
+    info(INTEREST, "HIGH")
+}
+
+record(calc,"$(P)$(R)$(Q)LogicNIM:RB")
+{
+    field(DESC, "$(Q) check logic NIM")
+    field(SCAN, "Passive")
+    field(INPA, "$(P)$(R)$(Q)OutputAmpAI CP")
+    field(INPB, "$(P)$(R)$(Q)OutputOffsetAI CP")
+    field(CALC, "A=0.8&&B=-0.8")
+    field(FLNK, "$(P)$(R)$(Q)LogicNR:RB")
+    field(ASG, "READONLY")
+    info(INTEREST, "HIGH")
+}
+
+record(calc,"$(P)$(R)$(Q)LogicNR:RB")
+{
+    field(DESC, "$(Q) check logic NR")
+    field(SCAN, "Passive")
+    field(INPA, "$(P)$(R)$(Q)LogicTTL:RB CP")
+    field(INPB, "$(P)$(R)$(Q)LogicNIM:RB CP")
+    field(CALC, "A=0&&B=0")
+    field(ASG, "READONLY")
+    info(INTEREST, "LOW")
+}
+
+record(calc,"$(P)$(R)$(Q)OutputPolarity_OFF")
+{
+    field(PINI, "YES")
+    field(DESC, "$(Q) polarity opposite bool")
+    field(SCAN, "Passive")
+    field(INPA, "$(P)$(R)$(Q)OutputPolarityBI CP")
+    field(CALC, "A=0")
+    field(ASG, "READONLY")
+    info(INTEREST, "LOW")
+}
