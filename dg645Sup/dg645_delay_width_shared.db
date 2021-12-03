@@ -1,0 +1,21 @@
+# these records would appear in both files
+
+record(calc,"$(P)$(R)$(Q)DelayWidthConvert")
+{
+    field(PINI, "YES")
+    field(DESC, "$(Q) Width value convert")
+    field(SCAN, "Passive")
+    field(PREC, "12")
+    field(INPA, "$(P)$(R)$(Q)DelayWidth CP")
+    field(CALC, "(A>1)?A:((A*1e3>1)?A*1e3:((A*1e6>1)?A*1e6:((A*1e9>1)?A*1e9:A*1e12)))")
+}
+
+record(ai,"$(P)$(R)$(Q)DelayWidth:RB")
+{
+    field(DESC, "$(Q) Width value output")
+    field(SCAN, "Passive")
+    field(PREC, "8")
+    field(INP, "$(P)$(R)$(Q)DelayWidthConvert CP")
+    field(ASG, "READONLY")
+    info(INTEREST, "HIGH")
+}

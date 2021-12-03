@@ -1,6 +1,5 @@
 # Makefile for Asyn dg645 support
 #
-# Created by lvj36227 on Tue Sep 21 09:32:16 2021
 # Based on the Asyn streamSCPI template
 
 TOP = .

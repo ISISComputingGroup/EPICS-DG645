@@ -5,11 +5,9 @@ from lewis.utils.replies import conditional_reply
 import queue
 import timeit
 
-
 @has_log
 class Dg645StreamInterface(StreamInterface):
     commands = {
-        # Commands implemented only for testing the IOC. Does not cover entire functionality of the device
         CmdBuilder("get_ident").escape("*IDN?").eos().build(),
         CmdBuilder("get_delay").escape("DLAY?").spaces().int().eos().build(),
         CmdBuilder("set_delay").escape("DLAY").spaces().int().optional(",").spaces().int().optional(
@@ -49,22 +47,12 @@ class Dg645StreamInterface(StreamInterface):
     in_terminator = "\n"
     out_terminator = "\r\n"
 
-    def check_int(self, val):
-        try:
-            int(val)
-            return True
-        except:
+    # Trigger source can be selected from 6 enum values
+    # which are represented by numbers 0-5
+    def check_trigger_source_valid(self, new_trg_src):
+        if new_trg_src < 0 or new_trg_src > 6:
             return False
-
-    def check_float(val):
-        try:
-            float(val)
-            return True
-        except:
-            return False
-
-    def handle_error(self, request, error):
-        self.log.error("An error occurred at request " + repr(request) + ": " + repr(error))
+        return True
 
     def catch_all(self, command):
         pass
@@ -78,24 +66,19 @@ class Dg645StreamInterface(StreamInterface):
 
     def set_delay(self, which, target, amount):
         if which == target or which == 0 or which == 1 or target == 1:
-            self._device.add_error(13)  # Illegal link error
+            self._device.add_error(self._device.ILLEGAL_LINK_ERROR_CODE)
             return
-
-        # check if value is a float
-        # the device rounds picoseconds to 5, 10, 15 etc
-        new_delay = "{:.12f}".format(float(amount))
-        new_delay = float(new_delay) * 1e12
-        new_delay = 5 * round(new_delay / 5)
-        new_delay *= 1e-12
-        self._device.delays[which] = (target, new_delay)
+        # If the delay is set on the device to a precision of 10e-12 then
+        # last digit is rounded to 5 or 0
+        self._device.delays[which] = (target, self._device.round_value_pcs(amount))
         self._device.update_trigger_delays()
 
     def get_trigger_source(self):
         return self._device.trigger_source
 
     def set_trigger_source(self, new):
-        if new < 0 or new > 6 or not self.check_int(new):
-            self._device.add_error(10)  # Illegal value error
+        if not self.check_trigger_source_valid(new):
+            self._device.add_error(self._device.ILLEGAL_VALUE_ERROR_CODE)
         self._device.trigger_source = new
 
     def get_level_amplitude(self, which):
@@ -129,6 +112,8 @@ class Dg645StreamInterface(StreamInterface):
         self._device.trigger_level = new
 
     # End of currently tested commands
+    # Commands below only return default value to pass Delaygen's ASYN driver's boot-up validity checks
+    # without it, the ASYN driver would crash
 
     def get_prescale_factor(self, which):
         return "0"

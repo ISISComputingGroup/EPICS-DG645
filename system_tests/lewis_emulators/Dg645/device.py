@@ -3,7 +3,6 @@ from .states import DefaultState
 from lewis.devices import StateMachineDevice
 import queue
 
-
 class SimulatedDg645(StateMachineDevice):
 
     def _initialize_data(self):
@@ -33,6 +32,11 @@ class SimulatedDg645(StateMachineDevice):
         self.trigger_level = 0
         self.error_queue = []
 
+        # Error codes
+        self.NO_ERROR_IN_QUEUE_CODE = 0
+        self.ILLEGAL_VALUE_ERROR_CODE = 10
+        self.ILLEGAL_LINK_ERROR_CODE = 13
+
     def _get_state_handlers(self):
         return {
             'default': DefaultState(),
@@ -56,9 +60,19 @@ class SimulatedDg645(StateMachineDevice):
 
     def get_error(self):
         if len(self.error_queue) > 0:
-            return self.error_queue.pop()
+            return self.error_queue.pop(0)
         else:
-            return 0
+            return self.NO_ERROR_IN_QUEUE_CODE
 
     def add_error(self, err):
-        self.error_queue = [err] + self.error_queue[0:20]
+        self.error_queue.append(err)
+        # Device holds a queue of errors of size 20
+        self.error_queue = self.error_queue[:20]
+
+    # Rounds up numbers of precision of 10e-12 and lower to 5 or 0
+    def round_value_pcs(self, value):
+        new_value = "{:.12f}".format(float(value))
+        new_value = float(new_value) * 1e12
+        new_value = 5 * round(new_value / 5)
+        new_value *= 1e-12
+        return new_value

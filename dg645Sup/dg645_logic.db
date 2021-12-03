@@ -1,12 +1,3 @@
-record(bo, "$(P)$(R)$(Q)SIM")
-{
-    field(SCAN, "Passive")
-    field(DTYP, "Soft Channel")
-    field(ZNAM, "NO")
-    field(ONAM, "YES")
-    field(VAL, "$(RECSIM=0)")
-}
-
 record(bo, "$(P)$(R)$(Q)DISABLE") 
 {
     field(DESC, "Disable comms")
@@ -22,7 +13,6 @@ record(bo, "$(P)$(R)$(Q)DISABLE")
 record(mbbo,"$(P)$(R)$(Q)OutputPolarity:SP")
 {
     field(DESC, "$(Q) polarity")
-    field(EGU, "")
     field(SCAN, "Passive")
     field(ZRST, "Negative")
     field(ONST, "Positive")

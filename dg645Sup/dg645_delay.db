@@ -1,12 +1,3 @@
-record(bo, "$(P)$(R)$(Q)SIM")
-{
-    field(SCAN, "Passive")
-    field(DTYP, "Soft Channel")
-    field(ZNAM, "NO")
-    field(ONAM, "YES")
-    field(VAL, "$(RECSIM=0)")
-}
-
 record(bo, "$(P)$(R)$(Q)DISABLE") 
 {
     field(DESC, "Disable comms")
@@ -28,7 +19,6 @@ record(stringout,"$(P)$(R)$(Q)Delay:SP")
 record(mbbo,"$(P)$(R)$(Q)DelayUnit:SP")
 {
     field(DESC, "Chan $(Q) unit setpoint")
-    field(EGU, "")
     field(SCAN, "Passive")
     field(ZRST, "s")
     field(ONST, "ms")
@@ -51,7 +41,7 @@ record(calcout,"$(P)$(R)$(Q)DelayUnitOut")
     field(INPB, "$(P)$(R)$(Q)DelayUnit:SP.RVAL")
     field(CALC, "A*(10^(-1*B))")
     field(OUT, "$(P)$(R)$(Q)DelayAO")
-    field(FLNK, "$(P)$(R)$(Q)DelayAO")
+    field(FLNK, "$(P)$(R)$(Q)DelayAO.PROC")
 }
 
 record(fanout,"$(P)$(R)$(Q)DelayButton")
@@ -74,7 +64,7 @@ record(sseq,"$(P)$(R)$(Q)ReferenceSequence")
     field(SCAN, "Passive")
     field(DOL1, "$(P)$(R)$(Q)Reference:SP")
     field(LNK1, "$(P)$(R)$(Q)ReferenceMO")
-    field(FLNK, "$(P)$(R)$(Q)ReferenceMO")
+    field(FLNK, "$(P)$(R)$(Q)ReferenceMO.PROC")
 }
 
 # Delay actual
@@ -92,7 +82,6 @@ record(calc,"$(P)$(R)$(Q)DelayConvert")
 record(ai,"$(P)$(R)$(Q)Delay:RB")
 {
     field(DESC, "$(Q) value input")
-    field(EGU, "")
     field(SCAN, "Passive")
     field(PREC, "8")
     field(INP, "$(P)$(R)$(Q)DelayConvert CP")
@@ -132,27 +121,6 @@ record(calc,"$(P)$(R)$(Q)DelayWidth")
     field(INPK, "$(P)$(R)$(Q)ReferenceMI.RVAL CP")
     field(INPL, "$(P)$(R)$(Q)DelayAI CP")
     field(CALC, "L+(K=0?A:(K=1?B:(K=2?C:(K=3?D:(K=4?E:(K=5?F:(K=6?G:(K=7?H:(K=8?I:J)))))))))")
-}
-
-record(calc,"$(P)$(R)$(Q)DelayWidthConvert")
-{
-    field(PINI, "YES")
-    field(DESC, "$(Q) Width value convert")
-    field(SCAN, "Passive")
-    field(PREC, "12")
-    field(INPA, "$(P)$(R)$(Q)DelayWidth CP")
-    field(CALC, "(A>1)?A:((A*1e3>1)?A*1e3:((A*1e6>1)?A*1e6:((A*1e9>1)?A*1e9:A*1e12)))")
-}
-
-record(ai,"$(P)$(R)$(Q)DelayWidth:RB")
-{
-    field(DESC, "$(Q) Width value output")
-    field(EGU, "")
-    field(SCAN, "Passive")
-    field(PREC, "8")
-    field(INP, "$(P)$(R)$(Q)DelayWidthConvert CP")
-    field(ASG, "READONLY")
-    info(INTEREST, "HIGH")
 }
 
 record(scalcout,"$(P)$(R)$(Q)DelayWidthUnit:RB")
