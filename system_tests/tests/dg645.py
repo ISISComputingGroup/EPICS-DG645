@@ -39,7 +39,7 @@ class Dg645Tests(unittest.TestCase):
         ("SS ext fall edge", 4), ("Single shot", 5), ("Line", 6)
     ])
     def test_WHEN_trigger_source_set_THEN_readback_correct(self, expected_value, value):
-        self.ca.assert_setting_setpoint_sets_readback(value, "TriggerSourceMI", "TriggerSource:SP", expected_value)
+        self.ca.assert_setting_setpoint_sets_readback(value, "TriggerSourceMI", "TRIGGERSOURCE:SP", expected_value)
 
     @parameterized.expand([
         (0.5,), (1.25,), (4.52,), (1.12,), (0.53,)
@@ -55,10 +55,10 @@ class Dg645Tests(unittest.TestCase):
         ("T0",), ("AB",), ("CD",), ("EF",)
     ])
     def test_WHEN_logic_button_pressed_THEN_correct_logic_set_TTL(self, channel):
-        self.ca.process_pv(channel + "LogicTTL:SP")
-        self.ca.assert_that_pv_is(channel + "LogicTTL:RB", 1)
-        self.ca.assert_that_pv_is(channel + "LogicNIM:RB", 0)
-        self.ca.assert_that_pv_is(channel + "LogicNR:RB", 0)
+        self.ca.process_pv(channel + "LOGICTTL:SP")
+        self.ca.assert_that_pv_is(channel + "LOGICTTL:RB", 1)
+        self.ca.assert_that_pv_is(channel + "LOGICNIM:RB", 0)
+        self.ca.assert_that_pv_is(channel + "LOGICNR:RB", 0)
         self.ca.assert_that_pv_is(channel + "OutputAmpAI", 4)
         self.ca.assert_that_pv_is(channel + "OutputOffsetAI", 0)
 
@@ -66,10 +66,10 @@ class Dg645Tests(unittest.TestCase):
         ("T0",), ("AB",), ("CD",), ("EF",)
     ])
     def test_WHEN_logic_button_pressed_THEN_correct_logic_set_NIM(self, channel):
-        self.ca.process_pv(channel + "LogicNIM:SP")
-        self.ca.assert_that_pv_is(channel + "LogicTTL:RB", 0)
-        self.ca.assert_that_pv_is(channel + "LogicNIM:RB", 1)
-        self.ca.assert_that_pv_is(channel + "LogicNR:RB", 0)
+        self.ca.process_pv(channel + "LOGICNIM:SP")
+        self.ca.assert_that_pv_is(channel + "LOGICTTL:RB", 0)
+        self.ca.assert_that_pv_is(channel + "LOGICNIM:RB", 1)
+        self.ca.assert_that_pv_is(channel + "LOGICNR:RB", 0)
         self.ca.assert_that_pv_is(channel + "OutputAmpAI", 0.8)
         self.ca.assert_that_pv_is(channel + "OutputOffsetAI", -0.8)
 
@@ -79,9 +79,9 @@ class Dg645Tests(unittest.TestCase):
     def test_WHEN_logic_button_pressed_THEN_correct_logic_set_NR(self, channel):
         self.ca.set_pv_value(channel + "OutputAmpAO", 0)
         self.ca.set_pv_value(channel + "OutputOffsetAO", 0)
-        self.ca.assert_that_pv_is(channel + "LogicTTL:RB", 0)
-        self.ca.assert_that_pv_is(channel + "LogicNIM:RB", 0)
-        self.ca.assert_that_pv_is(channel + "LogicNR:RB", 1)
+        self.ca.assert_that_pv_is(channel + "LOGICTTL:RB", 0)
+        self.ca.assert_that_pv_is(channel + "LOGICNIM:RB", 0)
+        self.ca.assert_that_pv_is(channel + "LOGICNR:RB", 1)
         self.ca.assert_that_pv_is(channel + "OutputAmpAI", 0)
         self.ca.assert_that_pv_is(channel + "OutputOffsetAI", -0)
 
@@ -89,17 +89,17 @@ class Dg645Tests(unittest.TestCase):
         ("T0",), ("AB",), ("CD",), ("EF",)
     ])
     def test_WHEN_polarity_button_pressed_THEN_correct_polarity_set_positive(self, channel):
-        self.ca.set_pv_value(channel + "OutputPolarity:SP", 1)
+        self.ca.set_pv_value(channel + "OUTPUTPOLARITY:SP", 1)
         self.ca.assert_that_pv_is(channel + "OutputPolarityBI.RVAL", 1)
-        self.ca.assert_that_pv_is(channel + "OutputPolarity_OFF", 0)
+        self.ca.assert_that_pv_is(channel + "OUTPUTPOLARITY_OFF", 0)
 
     @parameterized.expand([
         ("T0",), ("AB",), ("CD",), ("EF",)
     ])
     def test_WHEN_polarity_button_pressed_THEN_correct_polarity_set_negative(self, channel):
-        self.ca.set_pv_value(channel + "OutputPolarity:SP", 0)
+        self.ca.set_pv_value(channel + "OUTPUTPOLARITY:SP", 0)
         self.ca.assert_that_pv_is(channel + "OutputPolarityBI.RVAL", 0)
-        self.ca.assert_that_pv_is(channel + "OutputPolarity_OFF", 1)
+        self.ca.assert_that_pv_is(channel + "OUTPUTPOLARITY_OFF", 1)
 
     def calculate_delay(self, count, unit):
         units_map = {"s": 1, "ms": 0.001, "us": 0.000001, "ns": 0.000000001, "ps": 0.000000000001}
@@ -107,10 +107,10 @@ class Dg645Tests(unittest.TestCase):
         return round(count * units_map[unit], 12)
 
     def set_channel_delay(self, chan, ref, dlay, unit, check_readback=False):
-        self.ca.set_pv_value(str(chan) + "Reference:SP", ref)
-        self.ca.set_pv_value(str(chan) + "Delay:SP", str(dlay))
-        self.ca.set_pv_value(str(chan) + "DelayUnit:SP", unit)
-        self.ca.set_pv_value(str(chan) + "DelayButton", 1)
+        self.ca.set_pv_value(str(chan) + "REFERENCE:SP", ref)
+        self.ca.set_pv_value(str(chan) + "DELAY:SP", str(dlay))
+        self.ca.set_pv_value(str(chan) + "DELAYUNIT:SP", unit)
+        self.ca.set_pv_value(str(chan) + "DELAYBUTTON", 1)
         # Flag to also check if channel was saved without errors
         if check_readback:
             self.check_channel_delay(chan, ref, dlay, unit)
@@ -118,8 +118,8 @@ class Dg645Tests(unittest.TestCase):
 
     def check_channel_delay(self, chan, ref, dlay, unit):
         self.ca.assert_that_pv_is(chan + "ReferenceMI", ref)
-        count_received = self.ca.get_pv_value(chan + "Delay:RB")
-        unit_received = self.ca.get_pv_value(chan + "DelayUnit:RB.SVAL")
+        count_received = self.ca.get_pv_value(chan + "DELAY:RB")
+        unit_received = self.ca.get_pv_value(chan + "DELAYUNIT:RB.SVAL")
         value_left = self.calculate_delay(count_received, unit_received)
         value_right = self.calculate_delay(dlay, unit)
         self.assertEqual(value_left, value_right, "Incorrect read back: " + str(value_left) + " != " + str(value_right))
@@ -152,10 +152,10 @@ class Dg645Tests(unittest.TestCase):
     ])
     def test_WHEN_delays_set_THEN_T1_width_readback_correct(self, channel_settings):
         current_max = self.set_all_channels(channel_settings)
-        t0_delay_rb = self.calculate_delay(self.ca.get_pv_value("T0Delay:RB"),
-                                           self.ca.get_pv_value("T0DelayUnit:RB.SVAL"))
-        t1_delay_rb = self.calculate_delay(self.ca.get_pv_value("T1Delay:RB"),
-                                           self.ca.get_pv_value("T1DelayUnit:RB.SVAL"))
+        t0_delay_rb = self.calculate_delay(self.ca.get_pv_value("T0DELAY:RB"),
+                                           self.ca.get_pv_value("T0DELAYUNIT:RB.SVAL"))
+        t1_delay_rb = self.calculate_delay(self.ca.get_pv_value("T1DELAY:RB"),
+                                           self.ca.get_pv_value("T1DELAYUNIT:RB.SVAL"))
         t1_width_expected = t0_delay_rb + current_max
         self.assertEqual(t1_width_expected, t0_delay_rb + t1_delay_rb, "T1 width incorrect, expected: " +
                          str(t1_width_expected) + ", received: " + str(t0_delay_rb + t1_delay_rb))
@@ -178,8 +178,8 @@ class Dg645Tests(unittest.TestCase):
     # returns calculated channel width if it matches the settings
     def check_channel_width_matches_settings(self, channel_settings, channel):
         expected = self.get_channel_width(channel_settings, channel)
-        received = self.calculate_delay(self.ca.get_pv_value(str(channel) + "DelayWidth:RB"),
-                                        self.ca.get_pv_value(str(channel) + "DelayWidthUnit:RB.SVAL"))
+        received = self.calculate_delay(self.ca.get_pv_value(str(channel) + "DELAYWIDTH:RB"),
+                                        self.ca.get_pv_value(str(channel) + "DELAYWIDTHUNIT:RB.SVAL"))
         self.assertEqual(expected, received, "Delay width incorrect, expected: " + str(expected) +
                          ", received: " + str(received))
 
@@ -201,8 +201,8 @@ class Dg645Tests(unittest.TestCase):
 
     def check_total_channel_width(self, channel_a, channel_b):
         expected = round(channel_a[1] + channel_b[1], 12)
-        received = self.calculate_delay(self.ca.get_pv_value(channel_a[0] + channel_b[0] + "DelayWidth:RB"),
-                                        self.ca.get_pv_value(channel_a[0] + channel_b[0] + "DelayWidthUnit"
+        received = self.calculate_delay(self.ca.get_pv_value(channel_a[0] + channel_b[0] + "DELAYWIDTH:RB"),
+                                        self.ca.get_pv_value(channel_a[0] + channel_b[0] + "DELAYWIDTHUNIT"
                                                                                            ":RB.SVAL"))
         self.assertEqual(expected, received, "Total delay width incorrect, expected: " + str(expected) +
                          ", received: " + str(received))
@@ -212,10 +212,10 @@ class Dg645Tests(unittest.TestCase):
         ("A", "B"), ("C", "D"), ("E", "F")
     ])
     def test_WHEN_delays_set_THEN_total_channel_widths_correct(self, name_a, name_b):
-        width_a = self.calculate_delay(self.ca.get_pv_value(name_a + "DelayWidth:RB"),
-                                       self.ca.get_pv_value(name_a + "DelayWidthUnit:RB.SVAL"))
-        width_b = self.calculate_delay(self.ca.get_pv_value(name_b + "DelayWidth:RB"),
-                                       self.ca.get_pv_value(name_b + "DelayWidthUnit:RB.SVAL"))
+        width_a = self.calculate_delay(self.ca.get_pv_value(name_a + "DELAYWIDTH:RB"),
+                                       self.ca.get_pv_value(name_a + "DELAYWIDTHUNIT:RB.SVAL"))
+        width_b = self.calculate_delay(self.ca.get_pv_value(name_b + "DELAYWIDTH:RB"),
+                                       self.ca.get_pv_value(name_b + "DELAYWIDTHUNIT:RB.SVAL"))
         self.check_total_channel_width((name_a, width_a), (name_b, width_b))
 
     def check_error_queue(self, start, length, message):

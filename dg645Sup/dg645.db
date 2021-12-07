@@ -22,7 +22,7 @@ record(bo, "$(P)$(R)DISABLE")
 
 # Trigger set
 
-record(mbbo,"$(P)$(R)TriggerSource:SP")
+record(mbbo,"$(P)$(R)TRIGGERSOURCE:SP")
 {
     field(DESC, "Trigger source")
     field(SCAN, "Passive")
@@ -76,11 +76,14 @@ record(mbbi,"$(P)$(R)T1ReferenceMI")
     field(DTYP, "asynInt32")
     field(INP,  "@asyn($(PORT)) T1_REF")
     field(SIML, "$(P)$(R)SIM")
-    field(SIOL, "$(P)$(R)SIM:T1ReferenceMI")
+    field(SIOL, "$(P)$(R)SIM:T1REFERENCEMI")
     field(SDIS, "$(P)$(R)DISABLE")
     field(ASG, "READONLY")
     info(INTEREST, "HIGH")
 }
+
+# These records two must follow Delaygen's naming standard
+# as they are extension of Delaygen's functionality
 
 record(ai,"$(P)$(R)T0DelayAI")
 {
@@ -116,7 +119,7 @@ record(ai,"$(P)$(R)T1DelayAI")
 
 ## Total delay widths (for the graphs)
 
-record(calc,"$(P)$(R)TRGDelayWidth")
+record(calc,"$(P)$(R)TRGDELAYWIDTH")
 {
     field(PINI, "YES")
     field(DESC, "TRG Width calc")
@@ -129,40 +132,40 @@ record(calc,"$(P)$(R)TRGDelayWidth")
     info(INTEREST, "MEDIUM")
 }
 
-record(calc,"$(P)$(R)ABDelayWidth")
+record(calc,"$(P)$(R)ABDELAYWIDTH")
 {
     field(PINI, "YES")
     field(DESC, "AB Width calc")
     field(SCAN, "Passive")
     field(PREC, "12")
-    field(INPA, "$(P)$(R)ADelayWidth CP")
-    field(INPB, "$(P)$(R)BDelayWidth CP")
+    field(INPA, "$(P)$(R)ADELAYWIDTH CP")
+    field(INPB, "$(P)$(R)BDELAYWIDTH CP")
     field(CALC, "A+B")
     field(ASG, "READONLY")
     info(INTEREST, "MEDIUM")
 }
 
-record(calc,"$(P)$(R)CDDelayWidth")
+record(calc,"$(P)$(R)CDDELAYWIDTH")
 {
     field(PINI, "YES")
     field(DESC, "CD Width calc")
     field(SCAN, "Passive")
     field(PREC, "12")
-    field(INPA, "$(P)$(R)CDelayWidth CP")
-    field(INPB, "$(P)$(R)DDelayWidth CP")
+    field(INPA, "$(P)$(R)CDELAYWIDTH CP")
+    field(INPB, "$(P)$(R)DDELAYWIDTH CP")
     field(CALC, "A+B")
     field(ASG, "READONLY")
     info(INTEREST, "MEDIUM")
 }
 
-record(calc,"$(P)$(R)EFDelayWidth")
+record(calc,"$(P)$(R)EFDELAYWIDTH")
 {
     field(PINI, "YES")
     field(DESC, "EF Width calc")
     field(SCAN, "Passive")
     field(PREC, "12")
-    field(INPA, "$(P)$(R)EDelayWidth CP")
-    field(INPB, "$(P)$(R)FDelayWidth CP")
+    field(INPA, "$(P)$(R)EDELAYWIDTH CP")
+    field(INPB, "$(P)$(R)FDELAYWIDTH CP")
     field(CALC, "A+B")
     field(ASG, "READONLY")
     info(INTEREST, "MEDIUM")
@@ -300,7 +303,7 @@ record(ai,"$(P)$(R)SIM:T1DelayAI")
     field(DTYP, "Soft Channel")
 }
 
-record(mbbi,"$(P)$(R)SIM:T1ReferenceMI")
+record(mbbi,"$(P)$(R)SIM:T1REFERENCEMI")
 {
     field(SCAN, "Passive")
     field(DTYP, "Soft Channel")

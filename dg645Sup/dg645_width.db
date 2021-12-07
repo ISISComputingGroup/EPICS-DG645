@@ -8,12 +8,12 @@ record(bo, "$(P)$(R)$(Q)DISABLE")
     field(ONAM, "COMMS DISABLED")
 }
 
-record(scalcout,"$(P)$(R)$(Q)DelayWidthUnit:RB")
+record(scalcout,"$(P)$(R)$(Q)DELAYWIDTHUNIT:RB")
 {
     field(PINI, "YES")
     field(DESC, "$(Q) width unit convert")
     field(SCAN, "Passive")
-    field(INPA, "$(P)$(R)$(Q)DelayWidth CP")
+    field(INPA, "$(P)$(R)$(Q)DELAYWIDTH CP")
     field(CALC, "(A>1)?'s':((A*1e3>1)?'ms':((A*1e6>1)?'us':((A*1e9>1)?'ns':'ps')))")
     field(ASG, "READONLY")
     info(INTEREST, "HIGH")
