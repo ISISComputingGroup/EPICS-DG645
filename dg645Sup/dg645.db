@@ -1,0 +1,311 @@
+record(bo, "$(P)$(R)SIM")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+    field(ZNAM, "NO")
+    field(ONAM, "YES")
+    field(VAL, "$(RECSIM=0)")
+}
+
+record(bo, "$(P)$(R)DISABLE") 
+{
+    field(DESC, "Disable comms")
+    field(PINI, "YES")
+    field(VAL, "$(DISABLE=0)")
+    field(OMSL, "supervisory")
+    field(ZNAM, "COMMS ENABLED")
+    field(ONAM, "COMMS DISABLED")
+}
+
+## Trigger settings and readback + suplementary records for reading
+## T0 and T1 that are not implemented by Delaygen
+
+# Trigger set
+
+record(mbbo,"$(P)$(R)TRIGGERSOURCE:SP")
+{
+    field(DESC, "Trigger source")
+    field(SCAN, "Passive")
+    field(ZRST, "Internal")
+    field(ONST, "External Rising Edges")
+    field(TWST, "External Falling Edges")
+    field(THST, "SS External Rising Edges")
+    field(FRST, "SS External Falling Edges")
+    field(FVST, "Single Shot")
+    field(SXST, "Line")
+    field(ZRVL, "0")
+    field(ONVL, "1")
+    field(TWVL, "2")
+    field(THVL, "3")
+    field(FRVL, "4")
+    field(FVVL, "5")
+    field(SXVL, "6")
+    field(DTYP, "Soft Channel")
+    field(OUT, "$(P)$(R)TriggerSourceMO")
+    field(FLNK, "$(P)$(R)TriggerSourceMO")
+    info(dgconfig, "VAL")
+}
+
+# Trigger actual
+
+record(mbbi,"$(P)$(R)T1ReferenceMI")
+{
+    field(PINI, "YES")
+    field(DESC, "Chan T1 Ref")
+    field(SCAN, "Passive")
+    field(ZRST, "T0")
+    field(ONST, "T1")
+    field(TWST, "A")
+    field(THST, "B")
+    field(FRST, "C")
+    field(FVST, "D")
+    field(SXST, "E")
+    field(SVST, "F")
+    field(EIST, "G")
+    field(NIST, "H")
+    field(ZRVL, "0")
+    field(ONVL, "1")
+    field(TWVL, "2")
+    field(THVL, "3")
+    field(FRVL, "4")
+    field(FVVL, "5")
+    field(SXVL, "6")
+    field(SVVL, "7")
+    field(EIVL, "8")
+    field(NIVL, "9")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT)) T1_REF")
+    field(SIML, "$(P)$(R)SIM")
+    field(SIOL, "$(P)$(R)SIM:T1REFERENCEMI")
+    field(SDIS, "$(P)$(R)DISABLE")
+    field(ASG, "READONLY")
+    info(INTEREST, "HIGH")
+}
+
+# These records two must follow Delaygen's naming standard
+# as they are extension of Delaygen's functionality
+
+record(ai,"$(P)$(R)T0DelayAI")
+{
+    field(PINI, "YES")
+    field(SCAN, "1 second")
+    field(DESC, "Chan T0 Delay")
+    field(PREC, "12")
+    field(EGU,  "s")
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT)) T0_DELAY")
+    field(SIML, "$(P)$(R)SIM")
+    field(SIOL, "$(P)$(R)SIM:T0DelayAI")
+    field(SDIS, "$(P)$(R)DISABLE")
+    field(ASG, "READONLY")
+    info(INTEREST, "LOW")
+}
+
+record(ai,"$(P)$(R)T1DelayAI")
+{
+    field(PINI, "YES")
+    field(SCAN, "1 second")
+    field(DESC, "Chan T1 Delay")
+    field(PREC, "12")
+    field(EGU,  "s")
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT)) T1_DELAY")
+    field(SIML, "$(P)$(R)SIM")
+    field(SIOL, "$(P)$(R)SIM:T1DelayAI")
+    field(SDIS, "$(P)$(R)DISABLE")
+    field(ASG, "READONLY")
+    info(INTEREST, "HIGH")
+}
+
+## Total delay widths (for the graphs)
+
+record(calc,"$(P)$(R)TRGDELAYWIDTH")
+{
+    field(PINI, "YES")
+    field(DESC, "TRG Width calc")
+    field(SCAN, "Passive")
+    field(PREC, "12")
+    field(INPA, "$(P)$(R)T0DelayAI CP")
+    field(INPB, "$(P)$(R)T1DelayAI CP")
+    field(CALC, "A+B")
+    field(ASG, "READONLY")
+    info(INTEREST, "MEDIUM")
+}
+
+record(calc,"$(P)$(R)ABDELAYWIDTH")
+{
+    field(PINI, "YES")
+    field(DESC, "AB Width calc")
+    field(SCAN, "Passive")
+    field(PREC, "12")
+    field(INPA, "$(P)$(R)ADELAYWIDTH CP")
+    field(INPB, "$(P)$(R)BDELAYWIDTH CP")
+    field(CALC, "A+B")
+    field(ASG, "READONLY")
+    info(INTEREST, "MEDIUM")
+}
+
+record(calc,"$(P)$(R)CDDELAYWIDTH")
+{
+    field(PINI, "YES")
+    field(DESC, "CD Width calc")
+    field(SCAN, "Passive")
+    field(PREC, "12")
+    field(INPA, "$(P)$(R)CDELAYWIDTH CP")
+    field(INPB, "$(P)$(R)DDELAYWIDTH CP")
+    field(CALC, "A+B")
+    field(ASG, "READONLY")
+    info(INTEREST, "MEDIUM")
+}
+
+record(calc,"$(P)$(R)EFDELAYWIDTH")
+{
+    field(PINI, "YES")
+    field(DESC, "EF Width calc")
+    field(SCAN, "Passive")
+    field(PREC, "12")
+    field(INPA, "$(P)$(R)EDELAYWIDTH CP")
+    field(INPB, "$(P)$(R)FDELAYWIDTH CP")
+    field(CALC, "A+B")
+    field(ASG, "READONLY")
+    info(INTEREST, "MEDIUM")
+}
+
+## Error queue records
+
+# Many records are needed due to limitation to 40 characters in string records
+
+record(stringin,"$(P)$(R)ERQ0")
+{
+    field(DESC, "Error queue error 0")
+    field(SCAN, "Passive")
+    field(INP, "$(P)$(R)ERQ1")
+    field(FLNK, "$(P)$(R)ERQ1")
+}
+
+record(stringin,"$(P)$(R)ERQ1")
+{
+    field(DESC, "Error queue error 1")
+    field(SCAN, "Passive")
+    field(INP, "$(P)$(R)ERQ2")
+    field(FLNK, "$(P)$(R)ERQ2")
+}
+
+record(stringin,"$(P)$(R)ERQ2")
+{
+    field(DESC, "Error queue error 2")
+    field(SCAN, "Passive")
+    field(INP, "$(P)$(R)ERQ3")
+    field(FLNK, "$(P)$(R)ERQ3")
+}
+
+record(stringin,"$(P)$(R)ERQ3")
+{
+    field(DESC, "Error queue error 3")
+    field(SCAN, "Passive")
+    field(INP, "$(P)$(R)ERQ4")
+    field(FLNK, "$(P)$(R)ERQ4")
+}
+
+record(stringin,"$(P)$(R)ERQ4")
+{
+    field(DESC, "Error queue error 4")
+    field(SCAN, "Passive")
+    field(INP, "$(P)$(R)ERQ5")
+    field(FLNK, "$(P)$(R)ERQ5")
+}
+
+record(stringin,"$(P)$(R)ERQ5")
+{
+    field(DESC, "Error queue error 5")
+    field(SCAN, "Passive")
+    field(INP, "$(P)$(R)ERQ6")
+    field(FLNK, "$(P)$(R)ERQ6")
+}
+
+record(stringin,"$(P)$(R)ERQ6")
+{
+    field(DESC, "Error queue error 6")
+    field(SCAN, "Passive")
+    field(INP, "$(P)$(R)ERQ7")
+    field(FLNK, "$(P)$(R)ERQ7")
+}
+
+record(stringin,"$(P)$(R)ERQ7")
+{
+    field(DESC, "Error queue error 7")
+    field(SCAN, "Passive")
+    field(INP, "$(P)$(R)ERQ8")
+    field(FLNK, "$(P)$(R)ERQ8")
+}
+
+record(stringin,"$(P)$(R)ERQ8")
+{
+    field(DESC, "Error queue error 8")
+    field(SCAN, "Passive")
+    field(INP, "$(P)$(R)ERQ9")
+    field(FLNK, "$(P)$(R)ERQ9")
+}
+
+record(stringin,"$(P)$(R)ERQ9")
+{
+    field(DESC, "Error queue error 9")
+    field(SCAN, "Passive")
+    field(INP, "$(P)$(R)ERQCALC.SVAL")
+}
+
+record(scalcout,"$(P)$(R)ERQCALC")
+{
+    field(DESC, "Error queue timestamp calc")
+    field(SCAN, "Passive")
+    field(INAA, "$(P)$(R)ERQLAST")
+    field(INBB, "$(P)$(R)ERQSTMP")
+    field(CALC, "BB+' '+AA")
+    field(FLNK, "$(P)$(R)ERQ0")
+}
+
+record(stringin,"$(P)$(R)ERQLAST")
+{
+    field(DESC, "Newest error in queue")
+    field(SCAN, "Passive")
+    field(INP, "$(P)$(R)StatusSI")
+    field(FLNK, "$(P)$(R)ERQSTMP")
+}
+
+record(stringin, "$(P)$(R)ERQSTMP")
+{
+    field(SCAN, "Passive")
+    field(DESC, "Current time and date")
+    field(DTYP, "Soft Timestamp")
+    field(INP, "@%Y-%m-%d %H:%M:%S")
+    field(FLNK, "$(P)$(R)ERQCALC")
+    field(SIML, "$(P)$(R)SIM")
+    field(SIOL, "$(P)$(R)SIM:ERQSTMP")
+    field(SDIS, "$(P)$(R)DISABLE")
+}
+### SIMULATION RECORDS ###
+
+record(stringin,"$(P)$(R)SIM:ERQSTMP")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+record(ai,"$(P)$(R)SIM:T0DelayAI")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+record(ai,"$(P)$(R)SIM:T1DelayAI")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+record(mbbi,"$(P)$(R)SIM:T1REFERENCEMI")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
