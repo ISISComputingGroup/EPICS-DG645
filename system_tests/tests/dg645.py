@@ -5,7 +5,6 @@ from utils.ioc_launcher import get_default_ioc_dir
 from utils.test_modes import TestModes
 from utils.testing import get_running_lewis_and_ioc, parameterized_list
 from parameterized import parameterized
-import time
 
 DEVICE_PREFIX = "DG645_01"
 EMULATOR_NAME = "Dg645"
@@ -22,7 +21,7 @@ IOCS = [
 TEST_MODES = [TestModes.DEVSIM]
 
 OUTPUT_CHANNELS = ["T0", "AB", "CD", "EF", "GH"]
-device_channels = ('T0', 'T1', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H')
+DEVICE_CHANNELS = ('T0', 'T1', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H')
 
 
 class Dg645Tests(unittest.TestCase):
@@ -117,7 +116,7 @@ class Dg645Tests(unittest.TestCase):
 
     # Returns max delay of all channels set
     def set_all_channels(self, dataset):
-        channels_to_set = device_channels[2:]
+        channels_to_set = DEVICE_CHANNELS[2:]
         self.assertEqual(len(dataset), len(channels_to_set), "Incorrect dataset provided")
         current_max = 0
         for i in range(len(dataset)):
@@ -185,7 +184,7 @@ class Dg645Tests(unittest.TestCase):
     ])
     def test_WHEN_delays_set_THEN_channel_widths_correct(self, channel_settings):
         # We are not checking this for T0 and T1 which are the first 2 channels
-        tested_channels = device_channels[2:]
+        tested_channels = DEVICE_CHANNELS[2:]
         self.set_all_channels(channel_settings[2:])
         for channel in tested_channels:
             self.check_channel_width_matches_settings(channel_settings, channel)
