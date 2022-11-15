@@ -42,6 +42,7 @@ record(calcout,"$(P)$(R)$(Q)DELAYUNITOUT")
     field(CALC, "A*(10^(-1*B))")
     field(OUT, "$(P)$(R)$(Q)DelayAO")
     field(FLNK, "$(P)$(R)$(Q)DelayAO.PROC")
+	field(ASG, "READONLY")
 }
 
 record(fanout,"$(P)$(R)$(Q)DELAYBUTTON")
@@ -77,6 +78,7 @@ record(calc,"$(P)$(R)$(Q)DELAYCONVERT")
     field(PREC, "12")
     field(INPA, "$(P)$(R)$(Q)DelayAI CP")
     field(CALC, "(A>1)?A:((A*1e3>1)?A*1e3:((A*1e6>1)?A*1e6:((A*1e9>1)?A*1e9:A*1e12)))")
+	field(ASG, "READONLY")
 }
 
 record(ai,"$(P)$(R)$(Q)DELAY:RB")
@@ -87,6 +89,7 @@ record(ai,"$(P)$(R)$(Q)DELAY:RB")
     field(INP, "$(P)$(R)$(Q)DELAYCONVERT CP")
     field(ASG, "READONLY")
     info(INTEREST, "HIGH")
+	field(EGU, "")
 }
 
 record(scalcout,"$(P)$(R)$(Q)DELAYUNIT:RB")
@@ -121,6 +124,7 @@ record(calc,"$(P)$(R)$(Q)DELAYWIDTH")
     field(INPK, "$(P)$(R)$(Q)ReferenceMI.RVAL CP")
     field(INPL, "$(P)$(R)$(Q)DelayAI CP")
     field(CALC, "L+(K=0?A:(K=1?B:(K=2?C:(K=3?D:(K=4?E:(K=5?F:(K=6?G:(K=7?H:(K=8?I:J)))))))))")
+	field(ASG, "READONLY")
 }
 
 record(scalcout,"$(P)$(R)$(Q)DELAYWIDTHUNIT:RB")

@@ -8,6 +8,7 @@ record(calc,"$(P)$(R)$(Q)DELAYWIDTHCONVERT")
     field(PREC, "12")
     field(INPA, "$(P)$(R)$(Q)DELAYWIDTH CP")
     field(CALC, "(A>1)?A:((A*1e3>1)?A*1e3:((A*1e6>1)?A*1e6:((A*1e9>1)?A*1e9:A*1e12)))")
+	field(ASG, "READONLY")
 }
 
 record(ai,"$(P)$(R)$(Q)DELAYWIDTH:RB")
@@ -18,4 +19,5 @@ record(ai,"$(P)$(R)$(Q)DELAYWIDTH:RB")
     field(INP, "$(P)$(R)$(Q)DELAYWIDTHCONVERT CP")
     field(ASG, "READONLY")
     info(INTEREST, "HIGH")
+	field(EGU, "")
 }
