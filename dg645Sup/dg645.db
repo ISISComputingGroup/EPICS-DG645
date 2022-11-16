@@ -262,6 +262,7 @@ record(scalcout,"$(P)$(R)ERQCALC")
     field(INBB, "$(P)$(R)ERQSTMP")
     field(CALC, "BB+' '+AA")
     field(FLNK, "$(P)$(R)ERQ0")
+	field(ASG, "READONLY")
 }
 
 record(stringin,"$(P)$(R)ERQLAST")
