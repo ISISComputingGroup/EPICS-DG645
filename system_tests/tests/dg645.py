@@ -3,9 +3,8 @@ import unittest
 from utils.channel_access import ChannelAccess
 from utils.ioc_launcher import get_default_ioc_dir
 from utils.test_modes import TestModes
-from utils.testing import get_running_lewis_and_ioc, skip_if_recsim
+from utils.testing import get_running_lewis_and_ioc, parameterized_list
 from parameterized import parameterized
-import time
 
 DEVICE_PREFIX = "DG645_01"
 EMULATOR_NAME = "Dg645"
@@ -21,7 +20,8 @@ IOCS = [
 
 TEST_MODES = [TestModes.DEVSIM]
 
-device_channels = ('T0', 'T1', 'A', 'B', 'C', 'D', 'E', 'F')
+OUTPUT_CHANNELS = ["T0", "AB", "CD", "EF", "GH"]
+DEVICE_CHANNELS = ('T0', 'T1', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H')
 
 
 class Dg645Tests(unittest.TestCase):
@@ -51,10 +51,8 @@ class Dg645Tests(unittest.TestCase):
     # 4, 0 = TTL
     # 0.8, -0.8 = NIM
     # Any other combination = NR
-    @parameterized.expand([
-        ("T0",), ("AB",), ("CD",), ("EF",)
-    ])
-    def test_WHEN_logic_button_pressed_THEN_correct_logic_set_TTL(self, channel):
+    @parameterized.expand(parameterized_list(OUTPUT_CHANNELS))
+    def test_WHEN_logic_button_pressed_THEN_correct_logic_set_TTL(self, _, channel):
         self.ca.process_pv(channel + "LOGICTTL:SP")
         self.ca.assert_that_pv_is(channel + "LOGICTTL:RB", 1)
         self.ca.assert_that_pv_is(channel + "LOGICNIM:RB", 0)
@@ -62,10 +60,8 @@ class Dg645Tests(unittest.TestCase):
         self.ca.assert_that_pv_is(channel + "OutputAmpAI", 4)
         self.ca.assert_that_pv_is(channel + "OutputOffsetAI", 0)
 
-    @parameterized.expand([
-        ("T0",), ("AB",), ("CD",), ("EF",)
-    ])
-    def test_WHEN_logic_button_pressed_THEN_correct_logic_set_NIM(self, channel):
+    @parameterized.expand(parameterized_list(OUTPUT_CHANNELS))
+    def test_WHEN_logic_button_pressed_THEN_correct_logic_set_NIM(self, _, channel):
         self.ca.process_pv(channel + "LOGICNIM:SP")
         self.ca.assert_that_pv_is(channel + "LOGICTTL:RB", 0)
         self.ca.assert_that_pv_is(channel + "LOGICNIM:RB", 1)
@@ -73,10 +69,8 @@ class Dg645Tests(unittest.TestCase):
         self.ca.assert_that_pv_is(channel + "OutputAmpAI", 0.8)
         self.ca.assert_that_pv_is(channel + "OutputOffsetAI", -0.8)
 
-    @parameterized.expand([
-        ("T0",), ("AB",), ("CD",), ("EF",)
-    ])
-    def test_WHEN_logic_button_pressed_THEN_correct_logic_set_NR(self, channel):
+    @parameterized.expand(parameterized_list(OUTPUT_CHANNELS))
+    def test_WHEN_logic_button_pressed_THEN_correct_logic_set_NR(self, _, channel):
         self.ca.set_pv_value(channel + "OutputAmpAO", 0)
         self.ca.set_pv_value(channel + "OutputOffsetAO", 0)
         self.ca.assert_that_pv_is(channel + "LOGICTTL:RB", 0)
@@ -85,18 +79,14 @@ class Dg645Tests(unittest.TestCase):
         self.ca.assert_that_pv_is(channel + "OutputAmpAI", 0)
         self.ca.assert_that_pv_is(channel + "OutputOffsetAI", -0)
 
-    @parameterized.expand([
-        ("T0",), ("AB",), ("CD",), ("EF",)
-    ])
-    def test_WHEN_polarity_button_pressed_THEN_correct_polarity_set_positive(self, channel):
+    @parameterized.expand(parameterized_list(OUTPUT_CHANNELS))
+    def test_WHEN_polarity_button_pressed_THEN_correct_polarity_set_positive(self, _, channel):
         self.ca.set_pv_value(channel + "OUTPUTPOLARITY:SP", 1)
         self.ca.assert_that_pv_is(channel + "OutputPolarityBI.RVAL", 1)
         self.ca.assert_that_pv_is(channel + "OUTPUTPOLARITY_OFF", 0)
 
-    @parameterized.expand([
-        ("T0",), ("AB",), ("CD",), ("EF",)
-    ])
-    def test_WHEN_polarity_button_pressed_THEN_correct_polarity_set_negative(self, channel):
+    @parameterized.expand(parameterized_list(OUTPUT_CHANNELS))
+    def test_WHEN_polarity_button_pressed_THEN_correct_polarity_set_negative(self, _, channel):
         self.ca.set_pv_value(channel + "OUTPUTPOLARITY:SP", 0)
         self.ca.assert_that_pv_is(channel + "OutputPolarityBI.RVAL", 0)
         self.ca.assert_that_pv_is(channel + "OUTPUTPOLARITY_OFF", 1)
@@ -126,7 +116,7 @@ class Dg645Tests(unittest.TestCase):
 
     # Returns max delay of all channels set
     def set_all_channels(self, dataset):
-        channels_to_set = device_channels[2:]
+        channels_to_set = DEVICE_CHANNELS[2:]
         self.assertEqual(len(dataset), len(channels_to_set), "Incorrect dataset provided")
         current_max = 0
         for i in range(len(dataset)):
@@ -137,7 +127,7 @@ class Dg645Tests(unittest.TestCase):
 
     @parameterized.expand([
         ("A", "T0", 1, "us"), ("B", "T0", 31, "us"), ("C", "F", 22, "ms"), ("D", "E", 12.3, "us"),
-        ("E", "T0", 1.1111, "s"), ("F", "T0", 4324155, "ps")
+        ("E", "T0", 1.1111, "s"), ("F", "T0", 4324155, "ps"), ("G", "T0", 66, "ms"), ("H", "T0", 99, "ms")
     ])
     def test_WHEN_delay_set_THEN_readback_correct(self, channel, reference, delay, unit):
         self.set_channel_delay(channel, reference, delay, unit, True)
@@ -146,9 +136,9 @@ class Dg645Tests(unittest.TestCase):
     # We must set all channels to measure this
     @parameterized.expand([
         ((("T0", 1, "us"), ("T0", 31, "us"), ("F", 22, "ms"),
-          ("E", 12.3, "us"), ("T0", 1.1111, "s"), ("T0", 4324155, "ps")),),
+          ("E", 12.3, "us"), ("T0", 1.1111, "s"), ("T0", 4324155, "ps"), ("T0", 4, "us"), ("T0", 12, "us")),),
         ((("T0", 5, "ns"), ("F", 12, "ms"), ("A", 153, "us"),
-          ("A", 3.3, "ms"), ("T0", 4.1452, "ms"), ("A", 344315, "ps")),),
+          ("A", 3.3, "ms"), ("T0", 4.1452, "ms"), ("A", 344315, "ps"), ("T0", 2, "us"), ("T0", 4, "us")),),
     ])
     def test_WHEN_delays_set_THEN_T1_width_readback_correct(self, channel_settings):
         current_max = self.set_all_channels(channel_settings)
@@ -162,7 +152,7 @@ class Dg645Tests(unittest.TestCase):
 
     # performs a depth-limited recursive search to get final width of a channel
     def get_channel_width(self, channel_data, which, width=0, depth=0):
-        delays_dict = {"T0": 0, "T1": 1, "A": 2, "B": 3, "C": 4, "D": 5, "E": 6, "F": 7}
+        delays_dict = {"T0": 0, "T1": 1, "A": 2, "B": 3, "C": 4, "D": 5, "E": 6, "F": 7, "G": 8, "H": 9 }
         current = channel_data[delays_dict[which]]
         my_width = round(width + self.calculate_delay(current[1], current[2]), 12)
 
@@ -188,13 +178,13 @@ class Dg645Tests(unittest.TestCase):
     # all channels before checking this
     @parameterized.expand([
         ((("", 0, "s"), ("", 0, "s"), ("T0", 1, "us"), ("T0", 31, "us"), ("F", 22, "ms"),
-          ("E", 12.3, "us"), ("T0", 1.1111, "s"), ("T0", 4324155, "ps")),),
+          ("E", 12.3, "us"), ("T0", 1.1111, "s"), ("T0", 4324155, "ps"), ("T0", 4, "us"), ("T0", 7, "us")),),
         ((("", 0, "s"), ("", 0, "s"), ("T0", 5, "ns"), ("F", 12, "ms"), ("A", 153, "us"),
-          ("A", 3.3, "ms"), ("T0", 4.1452, "ms"), ("A", 344315, "ps")),),
+          ("A", 3.3, "ms"), ("T0", 4.1452, "ms"), ("A", 344315, "ps"), ("T0", 55.12, "us"), ("T0", 72.8, "us")),),
     ])
     def test_WHEN_delays_set_THEN_channel_widths_correct(self, channel_settings):
         # We are not checking this for T0 and T1 which are the first 2 channels
-        tested_channels = device_channels[2:]
+        tested_channels = DEVICE_CHANNELS[2:]
         self.set_all_channels(channel_settings[2:])
         for channel in tested_channels:
             self.check_channel_width_matches_settings(channel_settings, channel)
@@ -209,7 +199,7 @@ class Dg645Tests(unittest.TestCase):
 
     # Total width is a sum of width of 2 channels. For example: AB_width = A_width + B_width
     @parameterized.expand([
-        ("A", "B"), ("C", "D"), ("E", "F")
+        ("A", "B"), ("C", "D"), ("E", "F"), ("G", "H")
     ])
     def test_WHEN_delays_set_THEN_total_channel_widths_correct(self, name_a, name_b):
         width_a = self.calculate_delay(self.ca.get_pv_value(name_a + "DELAYWIDTH:RB"),

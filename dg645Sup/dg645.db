@@ -48,6 +48,40 @@ record(mbbo,"$(P)$(R)TRIGGERSOURCE:SP")
 
 # Trigger actual
 
+record(mbbi,"$(P)$(R)T0ReferenceMI")
+{
+    field(PINI, "YES")
+    field(DESC, "Chan T0 Ref")
+    field(SCAN, "Passive")
+    field(ZRST, "T0")
+    field(ONST, "T1")
+    field(TWST, "A")
+    field(THST, "B")
+    field(FRST, "C")
+    field(FVST, "D")
+    field(SXST, "E")
+    field(SVST, "F")
+    field(EIST, "G")
+    field(NIST, "H")
+    field(ZRVL, "0")
+    field(ONVL, "1")
+    field(TWVL, "2")
+    field(THVL, "3")
+    field(FRVL, "4")
+    field(FVVL, "5")
+    field(SXVL, "6")
+    field(SVVL, "7")
+    field(EIVL, "8")
+    field(NIVL, "9")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT)) T0_REF")
+    field(SIML, "$(P)$(R)SIM")
+    field(SIOL, "$(P)$(R)SIM:T0REFERENCEMI")
+    field(SDIS, "$(P)$(R)DISABLE")
+    field(ASG, "READONLY")
+    info(INTEREST, "HIGH")
+}
+
 record(mbbi,"$(P)$(R)T1ReferenceMI")
 {
     field(PINI, "YES")
@@ -166,6 +200,19 @@ record(calc,"$(P)$(R)EFDELAYWIDTH")
     field(PREC, "12")
     field(INPA, "$(P)$(R)EDELAYWIDTH CP")
     field(INPB, "$(P)$(R)FDELAYWIDTH CP")
+    field(CALC, "A+B")
+    field(ASG, "READONLY")
+    info(INTEREST, "MEDIUM")
+}
+
+record(calc,"$(P)$(R)GHDELAYWIDTH")
+{
+    field(PINI, "YES")
+    field(DESC, "GH Width calc")
+    field(SCAN, "Passive")
+    field(PREC, "12")
+    field(INPA, "$(P)$(R)GDELAYWIDTH CP")
+    field(INPB, "$(P)$(R)HDELAYWIDTH CP")
     field(CALC, "A+B")
     field(ASG, "READONLY")
     info(INTEREST, "MEDIUM")
@@ -304,9 +351,14 @@ record(ai,"$(P)$(R)SIM:T1DelayAI")
     field(DTYP, "Soft Channel")
 }
 
-record(mbbi,"$(P)$(R)SIM:T1REFERENCEMI")
+record(mbbi,"$(P)$(R)SIM:T0REFERENCEMI")
 {
     field(SCAN, "Passive")
     field(DTYP, "Soft Channel")
 }
 
+record(mbbi,"$(P)$(R)SIM:T1REFERENCEMI")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
