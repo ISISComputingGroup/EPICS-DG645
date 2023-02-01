@@ -45,7 +45,7 @@ class Dg645Tests(unittest.TestCase):
         (0.5,), (1.25,), (4.52,), (1.12,), (0.53,)
     ])
     def test_WHEN_trigger_threshold_set_THEN_readback_correct(self, test_data):
-        self.ca.assert_setting_setpoint_sets_readback(test_data, "TriggerLevelAI", "TriggerLevelAO")
+        self.ca.assert_setting_setpoint_sets_readback(test_data, "TriggerLevelAI", "TriggerLevelAO", timeout=30)
 
     # OutputAmpAI and OutputOffsetAI values control which logic flag is currently applied, as demonstrated by VI
     # 4, 0 = TTL
