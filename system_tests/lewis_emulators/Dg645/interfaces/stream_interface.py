@@ -25,7 +25,7 @@ class Dg645StreamInterface(StreamInterface):
         CmdBuilder("get_last_error").escape("LERR?").eos().build(),
         CmdBuilder("set_clear_queue").escape("*CLS").eos().build(),
         CmdBuilder("get_trigger_level").escape("TLVL?").eos().build(),
-        CmdBuilder("set_trigger_level").escape("TLVL").spaces().any().eos().build(),
+        CmdBuilder("set_trigger_level").escape("TLVL").spaces().float().eos().build(),
         # Commands below are only defined but not implemented because without it, the Delaygen
         # ASYN driver would crash
         CmdBuilder("get_prescale_factor").escape("PRES?").spaces().int().eos().build(),
