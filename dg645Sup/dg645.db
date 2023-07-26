@@ -44,6 +44,7 @@ record(mbbo,"$(P)$(R)TRIGGERSOURCE:SP")
     field(OUT, "$(P)$(R)TriggerSourceMO")
     field(FLNK, "$(P)$(R)TriggerSourceMO")
     info(dgconfig, "VAL")
+    info(autosaveFields, "VAL")
 }
 
 # Trigger actual

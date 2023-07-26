@@ -14,6 +14,7 @@ record(stringout,"$(P)$(R)$(Q)DELAY:SP")
 {
     field(DESC, "Chan $(Q) setpoint")
     field(SCAN, "Passive")
+    info(autosaveFields, "VAL")
 }
 
 record(mbbo,"$(P)$(R)$(Q)DELAYUNIT:SP")
@@ -31,6 +32,7 @@ record(mbbo,"$(P)$(R)$(Q)DELAYUNIT:SP")
     field(THVL, "9")
     field(FRVL, "12")
     field(DTYP, "Soft Channel")
+    info(autosaveFields, "VAL")
 }
 
 record(calcout,"$(P)$(R)$(Q)DELAYUNITOUT")
@@ -57,6 +59,7 @@ record(stringout,"$(P)$(R)$(Q)REFERENCE:SP")
 {
     field(DESC, "Chan $(Q) setpoint ref")
     field(SCAN, "Passive")
+    info(autosaveFields, "VAL")
 }
 
 record(sseq,"$(P)$(R)$(Q)REFERENCESEQUENCE")
