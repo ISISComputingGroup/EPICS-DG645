@@ -1,7 +1,7 @@
 import unittest
 
 from utils.channel_access import ChannelAccess
-from utils.ioc_launcher import get_default_ioc_dir
+from utils.ioc_launcher import get_default_ioc_dir, ProcServLauncher
 from utils.test_modes import TestModes
 from utils.testing import get_running_lewis_and_ioc, parameterized_list
 from parameterized import parameterized
@@ -15,6 +15,7 @@ IOCS = [
         "directory": get_default_ioc_dir("DG645"),
         "macros": {},
         "emulator": EMULATOR_NAME,
+        "ioc_launcher_class": ProcServLauncher,
     },
 ]
 
@@ -109,7 +110,7 @@ class Dg645Tests(unittest.TestCase):
     def check_channel_delay(self, chan, ref, dlay, unit):
         self.ca.assert_that_pv_is(chan + "ReferenceMI", ref)
         count_received = self.ca.get_pv_value(chan + "DELAY:RB")
-        unit_received = self.ca.get_pv_value(chan + "DELAYUNIT:RB.SVAL")
+        unit_received = self.ca.get_pv_value(chan + "DELAYUNIT:RB")
         value_left = self.calculate_delay(count_received, unit_received)
         value_right = self.calculate_delay(dlay, unit)
         self.assertEqual(value_left, value_right, "Incorrect read back: " + str(value_left) + " != " + str(value_right))
@@ -143,9 +144,9 @@ class Dg645Tests(unittest.TestCase):
     def test_WHEN_delays_set_THEN_T1_width_readback_correct(self, channel_settings):
         current_max = self.set_all_channels(channel_settings)
         t0_delay_rb = self.calculate_delay(self.ca.get_pv_value("T0DELAY:RB"),
-                                           self.ca.get_pv_value("T0DELAYUNIT:RB.SVAL"))
+                                           self.ca.get_pv_value("T0DELAYUNIT:RB"))
         t1_delay_rb = self.calculate_delay(self.ca.get_pv_value("T1DELAY:RB"),
-                                           self.ca.get_pv_value("T1DELAYUNIT:RB.SVAL"))
+                                           self.ca.get_pv_value("T1DELAYUNIT:RB"))
         t1_width_expected = t0_delay_rb + current_max
         self.assertEqual(t1_width_expected, t0_delay_rb + t1_delay_rb, "T1 width incorrect, expected: " +
                          str(t1_width_expected) + ", received: " + str(t0_delay_rb + t1_delay_rb))
