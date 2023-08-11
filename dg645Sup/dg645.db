@@ -227,7 +227,7 @@ record(ao,"$(P)$(R)T0DelayAO")
 {
     field(DESC, "T0 Delay")
     field(PREC, "12")
-    field(EGU,  "Sec")
+    field(EGU,  "s")
     field(OUT,  "$(P)$(R)T0DelayWriteAO PP")
     info(dgconfig, "VAL")
 }
@@ -241,14 +241,13 @@ record(ao,"$(P)$(R)T0DelayWriteAO")
     field(SIML, "$(P)$(R)SIM")
     field(SIOL, "$(P)$(R)SIM:T0DelayAI")
     field(SDIS, "$(P)$(R)DISABLE")
-    info(INTEREST, "LOW")
 }
 
 record(ao,"$(P)$(R)T1DelayAO")
 {
     field(DESC, "T1 Delay")
     field(PREC, "12")
-    field(EGU,  "Sec")
+    field(EGU,  "s")
     field(OUT,  "$(P)$(R)T1DelayWriteAO PP")
     info(dgconfig, "VAL")
 }
@@ -262,7 +261,6 @@ record(ao,"$(P)$(R)T1DelayWriteAO")
     field(SIML, "$(P)$(R)SIM")
     field(SIOL, "$(P)$(R)SIM:T0DelayAI")
     field(SDIS, "$(P)$(R)DISABLE")
-    info(INTEREST, "LOW")
 }
 
 ## Total delay widths (for the graphs)
