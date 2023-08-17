@@ -48,9 +48,9 @@ record(seq, "$(P)$(R)MODE:SEQ")
 record(bo, "$(P)$(R)SAVE") #PV For OPI Button "Save"
 {
     field(DESC, "Save Button")
-    field(ZRST, "NO")
-    field(ONST, "YES")
-    field(OUT, "$(P)$(R)SAVE_SEND.PROC PP")
+    field(ZNAM, "NO")
+    field(ONAM, "YES")
+    field(OUT, "$(P)$(R)_SAVE_CALC.PROC PP")
     field(SIML, "$(P)$(R)SIM")
     field(SIOL, "$(P)$(R)SIM:SAVE")
     field(SDIS, "$(P)$(R)DISABLE")
@@ -59,8 +59,8 @@ record(bo, "$(P)$(R)SAVE") #PV For OPI Button "Save"
 record(bo, "$(P)$(R)LOAD") #PV For OPI Button "LOAD"
 {
     field(DESC, "Load Settings from slot 0(default) - 9")
-    field(ZRST, "NO")
-    field(ONST, "YES")
+    field(ZNAM, "NO")
+    field(ONAM, "YES")
     field(OUT, "$(P)$(R)LOAD_SEND.PROC PP")
     field(SIML, "$(P)$(R)SIM")
     field(SIOL, "$(P)$(R)SIM:RECALL")
@@ -71,7 +71,6 @@ record(mbbo, "$(P)$(R)SAVE_STATE") #PV For save slot drop down
 {
     field(DESC, "Slots for saving configurations, 0 - 9")
     field(SCAN, "Passive")
-    field(EGU, "")
     field(ZRST, "0")
     field(ONST, "1")
     field(TWST, "2")
@@ -84,32 +83,42 @@ record(mbbo, "$(P)$(R)SAVE_STATE") #PV For save slot drop down
     field(NIST, "9")
 }
 
-record(calcout, "$(P)$(R)SAVE_SEND") #Send command to device to save settings to specified slot
+record(calcout, "$(P)$(R)_SAVE_CALC") #Send command to device to save settings to specified slot
 {
     field(INPA, "$(P)$(R)SAVE_STATE")
     field(DESC, "Save Settings to slot 1 - 9")
     field(EGU, "")
-    field(DTYP, "asynInt32")
     field(CALC, "(A<10)&&(A>0)?A:0")
-    field(OOPT, "When Non-zero") #will only process when value != 0
+    field(OOPT, "When Non-zero") #will only process when value !=0
+    field(OUT, "$(P)$(R)_SAVE_SEND PP")
+}
+
+record(longout, "$(P)$(R)_SAVE_SEND")
+{
+    field(DTYP, "asynInt32")
     field(OUT, "@asyn($(PORT)) SAVE")
     field(SIML, "$(P)$(R)SIM")
     field(SIOL, "$(P)$(R)SIM:SAVE")
     field(SDIS, "$(P)$(R)DISABLE")
 }
 
-record(calcout, "$(P)$(R)LOAD_SEND") #Send command to device to load settings from specified slot
+record(longout, "$(P)$(R)LOAD_SEND") #Send command to device to load settings from specified slot
 {
-    field(INPA, "$(P)$(R)SAVE_STATE")
+    field(DOL, "$(P)$(R)SAVE_STATE")
     field(DESC, "Load Settings from slot 0(default) - 9")
     field(EGU, "")
+    field(OMSL, "closed_loop")
     field(DTYP, "asynInt32")
-    field(CALC, "A")
     field(OUT, "@asyn($(PORT)) RECALL")
-    field()
+    field(FLNK, "$(P)$(R)_RESTART_IOC")
     field(SIML, "$(P)$(R)SIM")
     field(SIOL, "$(P)$(R)SIM:RECALL")
     field(SDIS, "$(P)$(R)DISABLE")
+}
+
+record(longout, "$(P)$(R)_RESTART_IOC")
+{
+    field(OUT, "$(P)CS:IOC:DG645_01:DEVIOS:SysReset PP")
 }
 	
 ## Trigger settings and readback + suplementary records for reading
