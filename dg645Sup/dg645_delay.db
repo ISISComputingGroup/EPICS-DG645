@@ -127,7 +127,6 @@ record(scalcout,"$(P)$(R)$(Q)DELAYUNIT:RB_")
     field(INPA, "$(P)$(R)$(Q)DelayAI CP")
     field(CALC, "(A>1)?'s':((A*1e3>1)?'ms':((A*1e6>1)?'us':((A*1e9>1)?'ns':'ps')))")
     field(ASG, "READONLY")
-    info(INTEREST, "HIGH")
 	field(OUT, "$(P)$(R)$(Q)DELAYUNIT:RB PP")
 }
 
@@ -135,6 +134,7 @@ record(stringin,"$(P)$(R)$(Q)DELAYUNIT:RB")
 {
     field(DESC, "$(Q) unit conversion")
     field(SCAN, "Passive")
+    info(INTEREST, "HIGH")
 }
 
 record(scalcout,"$(P)$(R)$(Q)DELAYUNIT:INIT")
