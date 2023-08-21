@@ -26,6 +26,10 @@ class Dg645StreamInterface(StreamInterface):
         CmdBuilder("set_clear_queue").escape("*CLS").eos().build(),
         CmdBuilder("get_trigger_level").escape("TLVL?").eos().build(),
         CmdBuilder("set_trigger_level").escape("TLVL").spaces().float().eos().build(),
+        CmdBuilder("local_mode").escape("LCAL").eos().build(),
+        CmdBuilder("remote_mode").escape("REMT").eos().build(),
+        CmdBuilder("save_config").escape("*SAV").spaces().int().eos().build(),
+        CmdBuilder("load_config").escape("*RCL").spaces().int().eos().build(),
         # Commands below are only defined but not implemented because without it, the Delaygen
         # ASYN driver would crash
         CmdBuilder("get_prescale_factor").escape("PRES?").spaces().int().eos().build(),
@@ -43,7 +47,7 @@ class Dg645StreamInterface(StreamInterface):
         CmdBuilder("get_holdoff").escape("HOLD?").eos().build(),
         CmdBuilder("get_step_size_delay").escape("SSDL?").spaces().int().eos().build(),
     }
-
+  
     in_terminator = "\n"
     out_terminator = "\r\n"
 
@@ -110,6 +114,18 @@ class Dg645StreamInterface(StreamInterface):
 
     def set_trigger_level(self, new):
         self._device.trigger_level = new
+
+    def local_mode(self):
+        return
+        
+    def remote_mode(self):
+        return
+
+    def load_config(self, id):
+        return
+        
+    def save_config(self, id):
+        return
 
     # End of currently tested commands
     # Commands below only return default value to pass Delaygen's ASYN driver's boot-up validity checks

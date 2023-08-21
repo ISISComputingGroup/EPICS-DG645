@@ -17,34 +17,116 @@ record(bo, "$(P)$(R)DISABLE")
     field(ONAM, "COMMS DISABLED")
 }
 
+record(mbbo, "$(P)$(R)MODE:SP")
+{
+    field(DTYP, "Raw Soft Channel")
+    field(DESC, "Enable Local or Remote Mode")
+    field(ZRST, "REMOTE")
+    field(ONST, "LOCAL")
+	field(ZRVL, "3")
+	field(ONVL, "12")
+	field(OUT, "$(P)$(R)MODE:SEQ.SELN")
+    field(FLNK, "$(P)$(R)MODE:SEQ.PROC")
+	field(UDFS, "NO_ALARM")
+}
+
+record(seq, "$(P)$(R)MODE:SEQ")
+{
+    field(SHFT, "0")
+	field(SELM, "Mask")
+	field(DOL0, "1")
+	field(DOL1, "0")
+	field(DOL2, "1")
+	field(DOL3, "1")
+	field(LNK0, "$(P)$(R)GotoRemoteBO PP")
+	field(LNK1, "$(P)$(R)DISABLE PP")
+	field(LNK2, "$(P)$(R)DISABLE PP")
+	field(DLY3, "0.1")
+	field(LNK3, "$(P)$(R)GotoLocalBO PP")
+}
+
+record(bo, "$(P)$(R)SAVE") #PV For OPI Button "Save"
+{
+    field(DESC, "Save Button")
+    field(ZNAM, "NO")
+    field(ONAM, "YES")
+    field(OUT, "$(P)$(R)_SAVE_CALC.PROC PP")
+    field(SIML, "$(P)$(R)SIM")
+    field(SIOL, "$(P)$(R)SIM:SAVE")
+    field(SDIS, "$(P)$(R)DISABLE")
+}
+
+record(bo, "$(P)$(R)LOAD") #PV For OPI Button "LOAD"
+{
+    field(DESC, "Load Settings from slot 0(default) - 9")
+    field(ZNAM, "NO")
+    field(ONAM, "YES")
+    field(OUT, "$(P)$(R)LOAD_SEND.PROC PP")
+    field(SIML, "$(P)$(R)SIM")
+    field(SIOL, "$(P)$(R)SIM:RECALL")
+    field(SDIS, "$(P)$(R)DISABLE")
+}
+
+record(mbbo, "$(P)$(R)SAVE_STATE") #PV For save slot drop down
+{
+    field(DESC, "Slots for saving configurations, 0 - 9")
+    field(SCAN, "Passive")
+    field(ZRST, "0")
+    field(ONST, "1")
+    field(TWST, "2")
+    field(THST, "3")
+    field(FRST, "4")
+    field(FVST, "5")
+    field(SXST, "6")
+    field(SVST, "7")
+    field(EIST, "8")
+    field(NIST, "9")
+}
+
+record(calcout, "$(P)$(R)_SAVE_CALC") #Send command to device to save settings to specified slot
+{
+    field(INPA, "$(P)$(R)SAVE_STATE")
+    field(DESC, "Save Settings to slot 1 - 9")
+    field(EGU, "")
+    field(CALC, "(A<10)&&(A>0)?A:0")
+    field(OOPT, "When Non-zero") #will only process when value !=0
+    field(OUT, "$(P)$(R)_SAVE_SEND PP")
+}
+
+record(longout, "$(P)$(R)_SAVE_SEND")
+{
+    field(DTYP, "asynInt32")
+    field(OUT, "@asyn($(PORT)) SAVE")
+    field(SIML, "$(P)$(R)SIM")
+    field(SIOL, "$(P)$(R)SIM:SAVE")
+    field(SDIS, "$(P)$(R)DISABLE")
+}
+
+record(longout, "$(P)$(R)LOAD_SEND") #Send command to device to load settings from specified slot
+{
+    field(DOL, "$(P)$(R)SAVE_STATE")
+    field(DESC, "Load Settings from slot 0(default) - 9")
+    field(EGU, "")
+    field(OMSL, "closed_loop")
+    field(DTYP, "asynInt32")
+    field(OUT, "@asyn($(PORT)) RECALL")
+    field(FLNK, "$(P)$(R)_RESTART_IOC")
+    field(SIML, "$(P)$(R)SIM")
+    field(SIOL, "$(P)$(R)SIM:RECALL")
+    field(SDIS, "$(P)$(R)DISABLE")
+}
+
+record(longout, "$(P)$(R)_RESTART_IOC")
+{
+    field(OUT, "$(P)CS:IOC:DG645_01:DEVIOS:SysReset PP")
+}
+	
 ## Trigger settings and readback + suplementary records for reading
 ## T0 and T1 that are not implemented by Delaygen
 
 # Trigger set
 
-record(mbbo,"$(P)$(R)TRIGGERSOURCE:SP")
-{
-    field(DESC, "Trigger source")
-    field(SCAN, "Passive")
-    field(ZRST, "Internal")
-    field(ONST, "External Rising Edges")
-    field(TWST, "External Falling Edges")
-    field(THST, "SS External Rising Edges")
-    field(FRST, "SS External Falling Edges")
-    field(FVST, "Single Shot")
-    field(SXST, "Line")
-    field(ZRVL, "0")
-    field(ONVL, "1")
-    field(TWVL, "2")
-    field(THVL, "3")
-    field(FRVL, "4")
-    field(FVVL, "5")
-    field(SXVL, "6")
-    field(DTYP, "Soft Channel")
-    field(OUT, "$(P)$(R)TriggerSourceMO")
-    field(FLNK, "$(P)$(R)TriggerSourceMO")
-    info(dgconfig, "VAL")
-}
+alias("$(P)$(R)TriggerSourceMO","$(P)$(R)TRIGGERSOURCE:SP")
 
 # Trigger actual
 
@@ -116,6 +198,71 @@ record(mbbi,"$(P)$(R)T1ReferenceMI")
     info(INTEREST, "HIGH")
 }
 
+record(mbbo,"$(P)$(R)T0ReferenceMO")
+{
+    field(DESC, "Chan T0 Ref")
+    field(SCAN, "Passive")
+    field(ZRST, "T0")
+    field(ONST, "T1")
+    field(TWST, "A")
+    field(THST, "B")
+    field(FRST, "C")
+    field(FVST, "D")
+    field(SXST, "E")
+    field(SVST, "F")
+    field(EIST, "G")
+    field(NIST, "H")
+    field(ZRVL, "0")
+    field(ONVL, "1")
+    field(TWVL, "2")
+    field(THVL, "3")
+    field(FRVL, "4")
+    field(FVVL, "5")
+    field(SXVL, "6")
+    field(SVVL, "7")
+    field(EIVL, "8")
+    field(NIVL, "9")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT)) T0_REF")
+    field(SIML, "$(P)$(R)SIM")
+    field(SIOL, "$(P)$(R)SIM:T0REFERENCEMI")
+    field(SDIS, "$(P)$(R)DISABLE")
+    info(dgconfig, "VAL")
+}
+
+record(mbbo,"$(P)$(R)T1ReferenceMO")
+{
+    field(DESC, "Chan T1 Ref")
+    field(SCAN, "Passive")
+    field(ZRST, "T0")
+    field(ONST, "T1")
+    field(TWST, "A")
+    field(THST, "B")
+    field(FRST, "C")
+    field(FVST, "D")
+    field(SXST, "E")
+    field(SVST, "F")
+    field(EIST, "G")
+    field(NIST, "H")
+    field(ZRVL, "0")
+    field(ONVL, "1")
+    field(TWVL, "2")
+    field(THVL, "3")
+    field(FRVL, "4")
+    field(FVVL, "5")
+    field(SXVL, "6")
+    field(SVVL, "7")
+    field(EIVL, "8")
+    field(NIVL, "9")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT)) T1_REF")
+    field(SIML, "$(P)$(R)SIM")
+    field(SIOL, "$(P)$(R)SIM:T1REFERENCEMI")
+    field(SDIS, "$(P)$(R)DISABLE")
+    info(dgconfig, "VAL")
+}
+
+
 # These records two must follow Delaygen's naming standard
 # as they are extension of Delaygen's functionality
 
@@ -149,6 +296,49 @@ record(ai,"$(P)$(R)T1DelayAI")
     field(SDIS, "$(P)$(R)DISABLE")
     field(ASG, "READONLY")
     info(INTEREST, "HIGH")
+}
+
+
+record(ao,"$(P)$(R)T0DelayAO")
+{
+    field(DESC, "T0 Delay")
+    field(PREC, "12")
+    field(EGU,  "Sec")
+    field(OUT,  "$(P)$(R)T0DelayWriteAO PP")
+    info(dgconfig, "VAL")
+}
+
+record(ao,"$(P)$(R)T0DelayWriteAO")
+{
+    field(PREC, "12")
+    field(EGU,  "s")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT)) T0_DELAY")
+    field(SIML, "$(P)$(R)SIM")
+    field(SIOL, "$(P)$(R)SIM:T0DelayAI")
+    field(SDIS, "$(P)$(R)DISABLE")
+    info(INTEREST, "LOW")
+}
+
+record(ao,"$(P)$(R)T1DelayAO")
+{
+    field(DESC, "T1 Delay")
+    field(PREC, "12")
+    field(EGU,  "Sec")
+    field(OUT,  "$(P)$(R)T1DelayWriteAO PP")
+    info(dgconfig, "VAL")
+}
+
+record(ao,"$(P)$(R)T1DelayWriteAO")
+{
+    field(PREC, "12")
+    field(EGU,  "s")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT)) T1_DELAY")
+    field(SIML, "$(P)$(R)SIM")
+    field(SIOL, "$(P)$(R)SIM:T0DelayAI")
+    field(SDIS, "$(P)$(R)DISABLE")
+    info(INTEREST, "LOW")
 }
 
 ## Total delay widths (for the graphs)
@@ -331,6 +521,7 @@ record(stringin, "$(P)$(R)ERQSTMP")
     field(SIOL, "$(P)$(R)SIM:ERQSTMP")
     field(SDIS, "$(P)$(R)DISABLE")
 }
+
 ### SIMULATION RECORDS ###
 
 record(stringin,"$(P)$(R)SIM:ERQSTMP")
@@ -358,6 +549,18 @@ record(mbbi,"$(P)$(R)SIM:T0REFERENCEMI")
 }
 
 record(mbbi,"$(P)$(R)SIM:T1REFERENCEMI")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+record(longin,"$(P)$(R)SIM:SAVE")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+record(longin,"$(P)$(R)SIM:RECALL")
 {
     field(SCAN, "Passive")
     field(DTYP, "Soft Channel")

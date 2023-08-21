@@ -10,19 +10,7 @@ record(bo, "$(P)$(R)$(Q)DISABLE")
 
 # Logic set
 
-record(mbbo,"$(P)$(R)$(Q)OUTPUTPOLARITY:SP")
-{
-    field(DESC, "$(Q) polarity")
-    field(SCAN, "Passive")
-    field(ZRST, "Negative")
-    field(ONST, "Positive")
-    field(ZRVL, "0")
-    field(ONVL, "1")
-    field(DTYP, "Soft Channel")
-    field(OUT, "$(P)$(R)$(Q)OutputPolarityBO")
-    field(FLNK, "$(P)$(R)$(Q)OutputPolarityBO")
-    info(dgconfig, "VAL")
-}
+alias("$(P)$(R)$(Q)OutputPolarityBO", "$(P)$(R)$(Q)OUTPUTPOLARITY:SP")
 
 record(seq,"$(P)$(R)$(Q)LOGICTTL:SP")
 {
