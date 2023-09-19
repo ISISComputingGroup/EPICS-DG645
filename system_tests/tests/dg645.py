@@ -191,7 +191,7 @@ class Dg645Tests(unittest.TestCase):
             self.check_channel_width_matches_settings(channel_settings, channel)
 
     def check_total_channel_width(self, channel_a, channel_b):
-        expected = round(channel_a[1] + channel_b[1], 12)
+        expected = abs(round(channel_a[1] - channel_b[1], 12))
         received = self.calculate_delay(self.ca.get_pv_value(channel_a[0] + channel_b[0] + "DELAYWIDTH:RB"),
                                         self.ca.get_pv_value(channel_a[0] + channel_b[0] + "DELAYWIDTHUNIT"
                                                                                            ":RB.SVAL"))
