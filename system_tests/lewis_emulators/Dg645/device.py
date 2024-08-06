@@ -6,7 +6,6 @@ from .states import DefaultState
 
 
 class SimulatedDg645(StateMachineDevice):
-
     def _initialize_data(self):
         self.identification = "SRS DG645,s/n001332,ver1.07.10E"
         self.delays = [
@@ -19,18 +18,12 @@ class SimulatedDg645(StateMachineDevice):
             (0, 0),  # E
             (0, 0),  # F
             (0, 0),  # G
-            (0, 0)  # H
+            (0, 0),  # H
         ]
         self.trigger_source = 0
-        self.level_amplitude = [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-        ]
-        self.level_offset = [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-        ]
-        self.level_polarity = [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-        ]
+        self.level_amplitude = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        self.level_offset = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        self.level_polarity = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         self.trigger_level = 0
         self.error_queue = []
 
@@ -41,15 +34,14 @@ class SimulatedDg645(StateMachineDevice):
 
     def _get_state_handlers(self):
         return {
-            'default': DefaultState(),
+            "default": DefaultState(),
         }
 
     def _get_initial_state(self):
-        return 'default'
+        return "default"
 
     def _get_transition_handlers(self):
-        return OrderedDict([
-        ])
+        return OrderedDict([])
 
     def update_trigger_delays(self):
         # T0 is the base - always 0
