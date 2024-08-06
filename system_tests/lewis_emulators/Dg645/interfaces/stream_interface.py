@@ -1,27 +1,59 @@
-from lewis.adapters.stream import StreamInterface, Cmd
-from lewis.utils.command_builder import CmdBuilder
+from lewis.adapters.stream import StreamInterface
 from lewis.core.logging import has_log
-from lewis.utils.replies import conditional_reply
-import queue
-import timeit
+from lewis.utils.command_builder import CmdBuilder
+
 
 @has_log
 class Dg645StreamInterface(StreamInterface):
     commands = {
         CmdBuilder("get_ident").escape("*IDN?").eos().build(),
         CmdBuilder("get_delay").escape("DLAY?").spaces().int().eos().build(),
-        CmdBuilder("set_delay").escape("DLAY").spaces().int().optional(",").spaces().int().optional(
-            ",").spaces().any().eos().build(),
+        CmdBuilder("set_delay")
+        .escape("DLAY")
+        .spaces()
+        .int()
+        .optional(",")
+        .spaces()
+        .int()
+        .optional(",")
+        .spaces()
+        .any()
+        .eos()
+        .build(),
         CmdBuilder("get_trigger_source").escape("TSRC?").eos().build(),
         CmdBuilder("set_trigger_source").escape("TSRC").spaces().int().eos().build(),
         CmdBuilder("get_level_amplitude").escape("LAMP?").spaces().int().eos().build(),
-        CmdBuilder("set_level_amplitude").escape("LAMP").spaces().spaces().int().optional(
-            ",").spaces().any().eos().build(),
+        CmdBuilder("set_level_amplitude")
+        .escape("LAMP")
+        .spaces()
+        .spaces()
+        .int()
+        .optional(",")
+        .spaces()
+        .any()
+        .eos()
+        .build(),
         CmdBuilder("get_level_offset").escape("LOFF?").spaces().int().eos().build(),
-        CmdBuilder("set_level_offset").escape("LOFF").spaces().spaces().int().optional(
-            ",").spaces().any().eos().build(),
+        CmdBuilder("set_level_offset")
+        .escape("LOFF")
+        .spaces()
+        .spaces()
+        .int()
+        .optional(",")
+        .spaces()
+        .any()
+        .eos()
+        .build(),
         CmdBuilder("get_level_polarity").escape("LPOL?").spaces().int().eos().build(),
-        CmdBuilder("set_level_polarity").escape("LPOL").spaces().int().optional(",").spaces().any().eos().build(),
+        CmdBuilder("set_level_polarity")
+        .escape("LPOL")
+        .spaces()
+        .int()
+        .optional(",")
+        .spaces()
+        .any()
+        .eos()
+        .build(),
         CmdBuilder("get_last_error").escape("LERR?").eos().build(),
         CmdBuilder("set_clear_queue").escape("*CLS").eos().build(),
         CmdBuilder("get_trigger_level").escape("TLVL?").eos().build(),
@@ -47,7 +79,7 @@ class Dg645StreamInterface(StreamInterface):
         CmdBuilder("get_holdoff").escape("HOLD?").eos().build(),
         CmdBuilder("get_step_size_delay").escape("SSDL?").spaces().int().eos().build(),
     }
-  
+
     in_terminator = "\n"
     out_terminator = "\r\n"
 
@@ -66,7 +98,11 @@ class Dg645StreamInterface(StreamInterface):
 
     def get_delay(self, which):
         self._device.update_trigger_delays()
-        return str(self._device.delays[which][0]) + ',' + str("{:.12f}".format(float(self._device.delays[which][1])))
+        return (
+            str(self._device.delays[which][0])
+            + ","
+            + str("{:.12f}".format(float(self._device.delays[which][1])))
+        )
 
     def set_delay(self, which, target, amount):
         if which == target or which == 0 or which == 1 or target == 1:
@@ -117,13 +153,13 @@ class Dg645StreamInterface(StreamInterface):
 
     def local_mode(self):
         return
-        
+
     def remote_mode(self):
         return
 
     def load_config(self, id):
         return
-        
+
     def save_config(self, id):
         return
 
