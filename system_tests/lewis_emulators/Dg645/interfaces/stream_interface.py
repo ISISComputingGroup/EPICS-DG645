@@ -1,9 +1,8 @@
-from lewis.adapters.stream import StreamInterface, Cmd
-from lewis.utils.command_builder import CmdBuilder
+
+from lewis.adapters.stream import StreamInterface
 from lewis.core.logging import has_log
-from lewis.utils.replies import conditional_reply
-import queue
-import timeit
+from lewis.utils.command_builder import CmdBuilder
+
 
 @has_log
 class Dg645StreamInterface(StreamInterface):

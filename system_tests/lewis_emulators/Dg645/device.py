@@ -1,7 +1,9 @@
 from collections import OrderedDict
-from .states import DefaultState
+
 from lewis.devices import StateMachineDevice
-import queue
+
+from .states import DefaultState
+
 
 class SimulatedDg645(StateMachineDevice):
 
