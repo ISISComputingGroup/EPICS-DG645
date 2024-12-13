@@ -1,0 +1,6 @@
+record(calc, "$(P)$(R)SUMMED_DLAY")
+{
+    field(INPA, "$(P)$(R)$(chan1=A)DELAY:RB CP")
+    field(INPB, "$(P)$(R)$(chan2=C)DELAY:RB CP")
+    field(CALC, "A+B")
+}
