@@ -59,6 +59,18 @@ record(mbbo, "$(P)$(R)MODE")
     field(VAL, "0")
 }
 
+record(calcout, "$(P)$(R)_MODEAUTOCHECK")
+{
+    field(DESC, "Mode Auto Error Check")
+    field(INPA, "$(P)$(R)MODE")
+    field(INPB, "$(P)$(R)DELAY")
+    field(INPC, "$(P)$(R)OFFSET")
+    field(CALC, "A=1?A:(A=2?A:(B>ABS(C)?1:2))")
+    # If mode is 1 or 2 then return 1 or 2
+    # Else if DELAY > OFFSET return 1 else 2
+    field(OUT, "$(P)$(R)SET_MODE PP")
+}
+
 record(longout, "$(P)$(R)SET_MODE") # Send command to device to load settings from specified slot
 {
     field(DESC, "Load Settings from slot 0(default) - 9")
@@ -129,16 +141,4 @@ record(seq, "$(P)$(R)_WRITE_DELAY")
     field(DO5, "1")
     
     field(SELM, "All")
-}
-
-record(calcout, "$(P)$(R)_MODEAUTOCHECK")
-{
-    field(DESC, "Mode 0 Error Check")
-    field(INPA, "$(P)$(R)MODE")
-    field(INPB, "$(P)$(R)DELAY")
-    field(INPC, "$(P)$(R)OFFSET")
-    field(CALC, "A=1?A:(A=2?A:(B>ABS(C)?1:2))")
-    # If mode is 1 or 2 then return 1 or 2
-    # Else if DELAY > OFFSET return 1 else 2
-    field(OUT, "$(P)$(R)SET_MODE PP")
 }
