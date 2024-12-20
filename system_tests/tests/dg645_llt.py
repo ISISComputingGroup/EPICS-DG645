@@ -37,8 +37,8 @@ class Dg645LLTTests(unittest.TestCase):
         self.ca.assert_that_pv_is("SUMMED_VALUE", 30)
 
     def test_Summed_Delay(self):
-        self.ca.set_pv_value("ADLAY", 10)
-        self.ca.set_pv_value("CDLAY", 20)
+        self.ca.set_pv_value("ADLAYSCAL", 10)
+        self.ca.set_pv_value("CDLAYSCAL", 20)
         self.ca.set_pv_value("ADELAYBUTTON", 1)
         self.ca.set_pv_value("CDELAYBUTTON", 1)
         self.ca.assert_that_pv_is("SUMMED_DELAY", 30)
