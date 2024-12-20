@@ -44,7 +44,7 @@ record(calcout,"$(P)$(R)$(Q)DELAYUNITOUT")
     field(INPB, "$(P)$(R)$(Q)DELAYUNIT:SP.RVAL")
     field(CALC, "A*(10^(-1*B))")
     field(OUT, "$(P)$(R)$(Q)DelayAO PP")
-	#field(ASG, "READONLY")
+	field(ASG, "READONLY")
 }
 
 record(fanout,"$(P)$(R)$(Q)DELAYBUTTON")
