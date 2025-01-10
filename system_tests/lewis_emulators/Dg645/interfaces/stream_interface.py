@@ -65,7 +65,12 @@ class Dg645StreamInterface(StreamInterface):
         # Commands below are only defined but not implemented because without it, the Delaygen
         # ASYN driver would crash
         CmdBuilder("get_prescale_factor").escape("PRES?").spaces().int().eos().build(),
-        CmdBuilder("get_prescale_phase_factor").escape("PHAS?").spaces().int().eos().build(),
+        CmdBuilder("get_prescale_phase_factor")
+        .escape("PHAS?")
+        .spaces()
+        .int()
+        .eos()
+        .build(),
         CmdBuilder("get_interface_config").escape("IFCF?").spaces().int().eos().build(),
         CmdBuilder("get_trigger_rate").escape("TRAT?").eos().build(),
         CmdBuilder("get_advanced_triggering_mode").escape("ADVT?").eos().build(),
