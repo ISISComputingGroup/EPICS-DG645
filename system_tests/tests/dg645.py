@@ -315,7 +315,7 @@ class Dg645Tests(unittest.TestCase):
         received = self.calculate_delay(
             self.ca.get_pv_value(channel_a[0] + channel_b[0] + "DELAYWIDTH:RB"),
             self.ca.get_pv_value(
-                channel_a[0] + channel_b[0] + "DELAYWIDTHUNIT" ":RB.SVAL"
+                channel_a[0] + channel_b[0] + "DELAYWIDTHUNIT:RB.SVAL"
             ),
         )
         self.assertEqual(

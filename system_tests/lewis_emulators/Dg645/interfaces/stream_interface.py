@@ -7,11 +7,9 @@ from typing import Any
 
 @has_log
 class Dg645StreamInterface(StreamInterface):
-    
     def __init__(self) -> None:
-        self.device : SimulatedDg645
+        self.device: SimulatedDg645
 
-    
     commands = {
         CmdBuilder("get_ident").escape("*IDN?").eos().build(),
         CmdBuilder("get_delay").escape("DLAY?").spaces().int().eos().build(),
@@ -148,7 +146,7 @@ class Dg645StreamInterface(StreamInterface):
     def get_level_polarity(self, which: int) -> list[int]:
         return self._device.level_polarity[which]
 
-    def set_level_polarity(self, which: int, new: int) -> Any:
+    def set_level_polarity(self, which: int, new: int) -> None:
         self._device.level_polarity[which] = new
 
     def get_last_error(self) -> int:
