@@ -1,14 +1,14 @@
 from lewis.adapters.stream import StreamInterface
 from lewis.core.logging import has_log
 from lewis.utils.command_builder import CmdBuilder
+
 from lewis_emulators.Dg645.device import SimulatedDg645
-from typing import Any
 
 
 @has_log
 class Dg645StreamInterface(StreamInterface):
     def __init__(self) -> None:
-        self.device: SimulatedDg645
+        self._device: SimulatedDg645
 
     commands = {
         CmdBuilder("get_ident").escape("*IDN?").eos().build(),
@@ -70,12 +70,7 @@ class Dg645StreamInterface(StreamInterface):
         # Commands below are only defined but not implemented because without it, the Delaygen
         # ASYN driver would crash
         CmdBuilder("get_prescale_factor").escape("PRES?").spaces().int().eos().build(),
-        CmdBuilder("get_prescale_phase_factor")
-        .escape("PHAS?")
-        .spaces()
-        .int()
-        .eos()
-        .build(),
+        CmdBuilder("get_prescale_phase_factor").escape("PHAS?").spaces().int().eos().build(),
         CmdBuilder("get_interface_config").escape("IFCF?").spaces().int().eos().build(),
         CmdBuilder("get_trigger_rate").escape("TRAT?").eos().build(),
         CmdBuilder("get_advanced_triggering_mode").escape("ADVT?").eos().build(),
@@ -100,7 +95,7 @@ class Dg645StreamInterface(StreamInterface):
             return False
         return True
 
-    def catch_all(self, command: Any) -> Any:
+    def catch_all(self, command: str) -> None:
         pass
 
     def get_ident(self) -> str:
@@ -114,7 +109,7 @@ class Dg645StreamInterface(StreamInterface):
             + str("{:.12f}".format(float(self._device.delays[which][1])))
         )
 
-    def set_delay(self, which: int, target: int, amount: float) -> Any:
+    def set_delay(self, which: int, target: int, amount: float) -> None:
         if which == target or which == 0 or which == 1 or target == 1:
             self._device.add_error(self._device.ILLEGAL_LINK_ERROR_CODE)
             return
@@ -126,24 +121,24 @@ class Dg645StreamInterface(StreamInterface):
     def get_trigger_source(self) -> int:
         return self._device.trigger_source
 
-    def set_trigger_source(self, new: int) -> Any:
+    def set_trigger_source(self, new: int) -> None:
         if not self.check_trigger_source_valid(new):
             self._device.add_error(self._device.ILLEGAL_VALUE_ERROR_CODE)
         self._device.trigger_source = new
 
-    def get_level_amplitude(self, which: int) -> list[int]:
+    def get_level_amplitude(self, which: int) -> int:
         return self._device.level_amplitude[which]
 
-    def set_level_amplitude(self, which: int, new: int) -> Any:
+    def set_level_amplitude(self, which: int, new: int) -> None:
         self._device.level_amplitude[which] = new
 
-    def get_level_offset(self, which: int) -> list[int]:
+    def get_level_offset(self, which: int) -> int:
         return self._device.level_offset[which]
 
-    def set_level_offset(self, which: int, new: int) -> Any:
+    def set_level_offset(self, which: int, new: int) -> None:
         self._device.level_offset[which] = new
 
-    def get_level_polarity(self, which: int) -> list[int]:
+    def get_level_polarity(self, which: int) -> int:
         return self._device.level_polarity[which]
 
     def set_level_polarity(self, which: int, new: int) -> None:
@@ -152,25 +147,25 @@ class Dg645StreamInterface(StreamInterface):
     def get_last_error(self) -> int:
         return self._device.get_error()
 
-    def set_clear_queue(self) -> Any:
+    def set_clear_queue(self) -> None:
         self._device.error_queue = []
 
-    def get_trigger_level(self) -> Any:
+    def get_trigger_level(self) -> int:
         return self._device.trigger_level
 
-    def set_trigger_level(self, new: int) -> Any:
+    def set_trigger_level(self, new: int) -> None:
         self._device.trigger_level = new
 
-    def local_mode(self) -> Any:
+    def local_mode(self) -> None:
         return
 
-    def remote_mode(self) -> Any:
+    def remote_mode(self) -> None:
         return
 
-    def load_config(self, id: int) -> Any:
+    def load_config(self, id: int) -> None:
         return
 
-    def save_config(self, id: int) -> Any:
+    def save_config(self, id: int) -> None:
         return
 
     # End of currently tested commands

@@ -90,17 +90,13 @@ class Dg645Tests(unittest.TestCase):
         self.ca.assert_that_pv_is(channel + "OutputOffsetAI", -0)
 
     @parameterized.expand(parameterized_list(OUTPUT_CHANNELS))
-    def test_WHEN_polarity_button_pressed_THEN_correct_polarity_set_positive(
-        self, _, channel
-    ):
+    def test_WHEN_polarity_button_pressed_THEN_correct_polarity_set_positive(self, _, channel):
         self.ca.set_pv_value(channel + "OUTPUTPOLARITY:SP", 1)
         self.ca.assert_that_pv_is(channel + "OutputPolarityBI.RVAL", 1)
         self.ca.assert_that_pv_is(channel + "OUTPUTPOLARITY_OFF", 0)
 
     @parameterized.expand(parameterized_list(OUTPUT_CHANNELS))
-    def test_WHEN_polarity_button_pressed_THEN_correct_polarity_set_negative(
-        self, _, channel
-    ):
+    def test_WHEN_polarity_button_pressed_THEN_correct_polarity_set_negative(self, _, channel):
         self.ca.set_pv_value(channel + "OUTPUTPOLARITY:SP", 0)
         self.ca.assert_that_pv_is(channel + "OutputPolarityBI.RVAL", 0)
         self.ca.assert_that_pv_is(channel + "OUTPUTPOLARITY_OFF", 1)
@@ -141,9 +137,7 @@ class Dg645Tests(unittest.TestCase):
     # Returns max delay of all channels set
     def set_all_channels(self, dataset):
         channels_to_set = DEVICE_CHANNELS[2:]
-        self.assertEqual(
-            len(dataset), len(channels_to_set), "Incorrect dataset provided"
-        )
+        self.assertEqual(len(dataset), len(channels_to_set), "Incorrect dataset provided")
         current_max = 0
         for i in range(len(dataset)):
             current_max = max(
@@ -169,9 +163,7 @@ class Dg645Tests(unittest.TestCase):
             ("H", "T0", 99, "ms"),
         ]
     )
-    def test_WHEN_delay_set_THEN_readback_correct(
-        self, channel, reference, delay, unit
-    ):
+    def test_WHEN_delay_set_THEN_readback_correct(self, channel, reference, delay, unit):
         self.set_channel_delay(channel, reference, delay, unit, True)
 
     # T1_delay = T0_delay + current_max_delay
@@ -262,10 +254,7 @@ class Dg645Tests(unittest.TestCase):
         self.assertEqual(
             expected,
             received,
-            "Delay width incorrect, expected: "
-            + str(expected)
-            + ", received: "
-            + str(received),
+            "Delay width incorrect, expected: " + str(expected) + ", received: " + str(received),
         )
 
     # Each channel has a width which is equal to this channel's delay plus delay of referenced channel
@@ -314,9 +303,7 @@ class Dg645Tests(unittest.TestCase):
         expected = abs(round(channel_a[1] - channel_b[1], 12))
         received = self.calculate_delay(
             self.ca.get_pv_value(channel_a[0] + channel_b[0] + "DELAYWIDTH:RB"),
-            self.ca.get_pv_value(
-                channel_a[0] + channel_b[0] + "DELAYWIDTHUNIT:RB.SVAL"
-            ),
+            self.ca.get_pv_value(channel_a[0] + channel_b[0] + "DELAYWIDTHUNIT:RB.SVAL"),
         )
         self.assertEqual(
             expected,
