@@ -1,10 +1,17 @@
 from lewis.adapters.stream import StreamInterface
 from lewis.core.logging import has_log
 from lewis.utils.command_builder import CmdBuilder
+from lewis_emulators.Dg645.device import SimulatedDg645
+from typing import Any
 
 
 @has_log
 class Dg645StreamInterface(StreamInterface):
+    
+    def __init__(self) -> None:
+        self.device : SimulatedDg645
+
+    
     commands = {
         CmdBuilder("get_ident").escape("*IDN?").eos().build(),
         CmdBuilder("get_delay").escape("DLAY?").spaces().int().eos().build(),
@@ -90,18 +97,18 @@ class Dg645StreamInterface(StreamInterface):
 
     # Trigger source can be selected from 6 enum values
     # which are represented by numbers 0-5
-    def check_trigger_source_valid(self, new_trg_src):
+    def check_trigger_source_valid(self, new_trg_src: int) -> bool:
         if new_trg_src < 0 or new_trg_src > 6:
             return False
         return True
 
-    def catch_all(self, command):
+    def catch_all(self, command: Any) -> Any:
         pass
 
-    def get_ident(self):
+    def get_ident(self) -> str:
         return self._device.identification
 
-    def get_delay(self, which):
+    def get_delay(self, which: int) -> str:
         self._device.update_trigger_delays()
         return (
             str(self._device.delays[which][0])
@@ -109,7 +116,7 @@ class Dg645StreamInterface(StreamInterface):
             + str("{:.12f}".format(float(self._device.delays[which][1])))
         )
 
-    def set_delay(self, which, target, amount):
+    def set_delay(self, which: int, target: int, amount: float) -> Any:
         if which == target or which == 0 or which == 1 or target == 1:
             self._device.add_error(self._device.ILLEGAL_LINK_ERROR_CODE)
             return
@@ -118,98 +125,99 @@ class Dg645StreamInterface(StreamInterface):
         self._device.delays[which] = (target, self._device.round_value_pcs(amount))
         self._device.update_trigger_delays()
 
-    def get_trigger_source(self):
+    def get_trigger_source(self) -> int:
         return self._device.trigger_source
 
-    def set_trigger_source(self, new):
+    def set_trigger_source(self, new: int) -> Any:
         if not self.check_trigger_source_valid(new):
             self._device.add_error(self._device.ILLEGAL_VALUE_ERROR_CODE)
         self._device.trigger_source = new
 
-    def get_level_amplitude(self, which):
+    def get_level_amplitude(self, which: int) -> list[int]:
         return self._device.level_amplitude[which]
 
-    def set_level_amplitude(self, which, new):
+    def set_level_amplitude(self, which: int, new: int) -> Any:
         self._device.level_amplitude[which] = new
 
-    def get_level_offset(self, which):
+    def get_level_offset(self, which: int) -> list[int]:
         return self._device.level_offset[which]
 
-    def set_level_offset(self, which, new):
+    def set_level_offset(self, which: int, new: int) -> Any:
         self._device.level_offset[which] = new
 
-    def get_level_polarity(self, which):
+    def get_level_polarity(self, which: int) -> list[int]:
         return self._device.level_polarity[which]
 
-    def set_level_polarity(self, which, new):
+    def set_level_polarity(self, which: int, new: int) -> Any:
         self._device.level_polarity[which] = new
 
-    def get_last_error(self):
+    def get_last_error(self) -> int:
         return self._device.get_error()
 
-    def set_clear_queue(self):
+    def set_clear_queue(self) -> Any:
         self._device.error_queue = []
 
-    def get_trigger_level(self):
+    def get_trigger_level(self) -> Any:
         return self._device.trigger_level
 
-    def set_trigger_level(self, new):
+    def set_trigger_level(self, new: int) -> Any:
         self._device.trigger_level = new
 
-    def local_mode(self):
+    def local_mode(self) -> Any:
         return
 
-    def remote_mode(self):
+    def remote_mode(self) -> Any:
         return
 
-    def load_config(self, id):
+    def load_config(self, id: int) -> Any:
         return
 
-    def save_config(self, id):
+    def save_config(self, id: int) -> Any:
         return
 
     # End of currently tested commands
-    # Commands below only return default value to pass Delaygen's ASYN driver's boot-up validity checks
+    # Commands below only return default value to pass Delaygen's
+    # ASYN driver's boot-up validity checks
     # without it, the ASYN driver would crash
 
-    def get_prescale_factor(self, which):
+    def get_prescale_factor(self, which: int) -> str:
         return "0"
 
-    def get_prescale_phase_factor(self, which):
+    def get_prescale_phase_factor(self, which: int) -> str:
         return "0"
 
-    def get_interface_config(self, which):
+    def get_interface_config(self, which: int) -> str:
         return "0"
 
-    def get_trigger_rate(self):
+    def get_trigger_rate(self) -> str:
         return "0"
 
-    def get_burst_count(self):
+    def get_burst_count(self) -> str:
         return "0"
 
-    def get_burst_delay(self):
+    def get_burst_delay(self) -> str:
         return "0"
 
-    def get_burst_mode(self):
+    def get_burst_mode(self) -> str:
         return "0"
 
-    def get_burst_period(self):
+    def get_burst_period(self) -> str:
         return "0"
 
-    def get_burst_t0(self):
+    def get_burst_t0(self) -> str:
         return "0"
 
-    def get_holdoff(self):
+    def get_holdoff(self) -> str:
         return "0"
 
-    def get_step_size_delay(self, which):
+    def get_step_size_delay(self, which: int) -> str:
         return "0"
 
-    def get_advanced_triggering_mode(self):
+    def get_advanced_triggering_mode(self) -> str:
         return "0"
 
-    def get_inhibit(self):
+    def get_inhibit(self) -> str:
         return "0"
 
-    def get_ethernet_mac(self):
+    def get_ethernet_mac(self) -> str:
         return "0"
