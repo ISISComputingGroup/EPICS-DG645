@@ -1,0 +1,144 @@
+record(calc, "$(P)$(R)$(chan1=A)DLAYSCAL")
+{
+    field(DESC, "Scaled raw value of ADELAY")
+    field(INPA, "$(P)$(R)$(chan1=A)DelayAI CP MS") # This is raw value scaled to 'us'
+    field(INPB, "1e6")
+    field(CALC, "A*B")
+    field(EGU, "us")
+}
+
+record(calc, "$(P)$(R)$(chan2=C)DLAYSCAL")
+{
+    field(DESC, "Scaled raw value of CDELAY")
+    field(INPA, "$(P)$(R)$(chan2=C)DelayAI CP MS")
+    field(INPB, "1e6")
+    field(CALC, "A*B")
+    field(EGU, "us")
+}
+
+record(calc, "$(P)$(R)SUMMED_DELAY")
+{
+    field(DESC, "Add dA & dC")
+    field(INPA, "$(P)$(R)$(chan1=A)DLAYSCAL CP MS")
+    field(INPB, "$(P)$(R)$(chan2=C)DLAYSCAL CP MS")
+    field(CALC, "A+B") # Add ADELAY & CDELAY
+    field(EGU, "us")
+}
+
+record(ai, "$(P)$(R)OFFSET")
+{
+    field(DESC, "User Offset")
+    field(VAL, "0")
+    field(EGU, "us")
+}
+
+record(ai, "$(P)$(R)DELAY")
+{
+    field(DESC, "User Delay")
+    field(VAL, "0")
+    field(EGU, "us")
+}
+
+record(calc, "$(P)$(R)SUMMED_VALUE")
+{
+    field(DESC, "Add Delay Offset")
+    field(INPA, "$(P)$(R)DELAY CP")
+    field(INPB, "$(P)$(R)OFFSET CP")
+    field(CALC, "A+B") # Add DELAY & OFFSET
+    field(EGU, "us")
+}
+
+record(mbbo, "$(P)$(R)MODE")
+{
+    field(DESC, "Device Mode. auto|1|2")
+    field(ZRST, "auto")
+    field(ONST, "1")
+    field(TWST, "2")
+    field(FLNK, "$(P)$(R)_MODEAUTOCHECK") # When mode changes then check if in mode auto
+    field(PINI, "YES")
+    field(VAL, "0")
+}
+
+record(calcout, "$(P)$(R)_MODEAUTOCHECK")
+{
+    field(DESC, "Mode Auto Error Check")
+    field(INPA, "$(P)$(R)MODE")
+    field(INPB, "$(P)$(R)DELAY")
+    field(INPC, "$(P)$(R)OFFSET")
+    field(CALC, "A=1?A:(A=2?A:(B>ABS(C)?1:2))")
+    # If mode is 1 or 2 then return 1 or 2
+    # Else if DELAY > OFFSET return 1 else 2
+    field(OUT, "$(P)$(R)SET_MODE PP")
+}
+
+record(longout, "$(P)$(R)SET_MODE") # Send command to device to load settings from specified slot
+{
+    field(DESC, "Load Settings from slot 0(default) - 9")
+    field(EGU, "")
+    field(DTYP, "asynInt32")
+    field(OUT, "@asyn($(PORT)) RECALL") # *RCL
+}
+
+record(calc, "$(P)$(R)_MODE1CHECK")
+{
+    field(DESC, "Mode 1 Error Check")
+    field(INPA, "$(P)$(R)$(chan2=C)DLAYSCAL CP")
+    field(INPB, "$(P)$(R)SUMMED_VALUE CP")
+    field(CALC, "(A+B)>39900||B<0")
+    # If delay + summed_val bigger than 39900 or summed_val less than 0 then error
+}
+
+record(calc, "$(P)$(R)_MODE2CHECK")
+{
+    field(DESC, "Mode 2 Error Check")
+    field(INPA, "$(P)$(R)$(chan2=C)DLAYSCAL CP")
+    field(INPB, "$(P)$(R)SUMMED_VALUE CP")
+    field(CALC, "B>39900||(A+B)<=0")
+    # If delay + summed_val less than or equal to 0 or summed_val bigger than 39900 then error
+}
+
+record(calc, "$(P)$(R)_BOTHCHECKS")
+{
+    field(DESC, "Mode 1 & 2 Error Check")
+    field(INPA, "$(P)$(R)SET_MODE CP")
+    field(INPB, "$(P)$(R)_MODE1CHECK CP")
+    field(INPC, "$(P)$(R)_MODE2CHECK CP")
+    field(CALC, "(A=1)?B:C")
+    # If mode is 1 return _MODE1CHECK else _MODE2CHECK
+}
+
+record(calcout, "$(P)$(R)ERROR")
+{
+    field(DESC, "Check Modes")
+    field(INPA, "$(P)$(R)SET_MODE CP")
+    field(INPB, "$(P)$(R)_BOTHCHECKS")
+    field(CALC, "A=0||B") # If no error then write delay when set
+    field(OOPT, "When Zero")
+    field(OUT, "$(P)$(R)_WRITE_DELAY PP")
+    field(DOPT, "Use OCAL")
+    field(OCAL, "1")
+}
+
+record(seq, "$(P)$(R)_WRITE_DELAY")
+{
+    field(DESC, "Update Delay")
+    field(VAL, "0")
+
+    # 1) Units set
+    field(LNK1, "$(P)$(R)$(chan1=A)DELAYUNIT:SP")
+    field(DO1, "2")
+    # 2) Set t0
+    field(LNK2, "$(P)$(R)$(chan1=A)REFERENCE:SP")
+    field(DO2, "0")
+    # 3) Set delay A
+    field(LNK3, "$(P)$(R)$(chan1=A)DelayWriteAO")
+    field(DOL3, "$(P)$(R)SUMMED_VALUE")
+    # 4) Send
+    field(LNK4, "$(P)$(R)$(chan1=A)DELAYBUTTON")
+    field(DO4, "1")
+    # 5) *CLS (StatusClearBO)
+    field(LNK5, "$(P)$(R)StatusClearBO")
+    field(DO5, "1")
+    
+    field(SELM, "All")
+}
