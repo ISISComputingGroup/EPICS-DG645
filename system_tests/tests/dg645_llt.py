@@ -46,6 +46,13 @@ class Dg645LLTTests(unittest.TestCase):
         self.ca.set_pv_value("CDELAYBUTTON", 1)
         self.ca.assert_that_pv_is("SUMMED_DELAY", 30)
 
+    def test_Summed_Delay(self): # change for full total
+        self.ca.set_pv_value("CDLAY", 0.02)
+        self.ca.set_pv_value("OFFSET", 10)
+        self.ca.set_pv_value("DELAY", 30)
+        self.ca.set_pv_value("ADELAYBUTTON", 1)
+        self.ca.assert_that_pv_is("SUMMED_DELAY", 60)
+
     def test_Mode_Zero_Change_Mode_To_One(self):
         self.ca.set_pv_value("DELAY", 10)
         self.ca.set_pv_value("OFFSET", 5)
