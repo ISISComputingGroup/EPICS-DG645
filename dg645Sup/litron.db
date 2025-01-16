@@ -12,7 +12,7 @@ record(calc, "$(P)$(R)$(chan1=A)DLAYSCAL")
 {
     field(DESC, "Scaled raw value of ADELAY")
     field(INPA, "$(P)$(R)$(chan1=A)DelayAI CP MS") # This is raw value scaled to 'us'
-    field(INPB, "1")
+    field(INPB, "1e6")
     field(CALC, "A*B")
     field(EGU, "us")
     field(PREC, "6")
@@ -49,7 +49,7 @@ record(calc, "$(P)$(R)SUMMED_VALUE")
     field(DESC, "Add Delay Offset")
     field(INPA, "$(P)$(R)DELAY CP")
     field(INPB, "$(P)$(R)OFFSET CP")
-    field(CALC, "A+B") # Add DELAY & OFFSET
+    field(CALC, "(A/1e6)+(B/1e6)") # Add DELAY & OFFSET
     field(EGU, "us")
     field(PREC, "6")
 }
@@ -111,7 +111,7 @@ record(calc, "$(P)$(R)_MODE1CHECK")
     field(DESC, "Mode 1 Error Check")
     field(INPA, "$(P)$(R)$(chan2=C)DLAYSCAL CP")
     field(INPB, "$(P)$(R)SUMMED_VALUE CP")
-    field(CALC, "(A+B)>39900||B<0")
+    field(CALC, "(A+(B*1e6))>39900||(B*1e6)<0")
     # If delay + summed_val bigger than 39900 or summed_val less than 0 then error
 }
 
@@ -120,7 +120,7 @@ record(calc, "$(P)$(R)_MODE2CHECK")
     field(DESC, "Mode 2 Error Check")
     field(INPA, "$(P)$(R)$(chan2=C)DLAYSCAL CP")
     field(INPB, "$(P)$(R)SUMMED_VALUE CP")
-    field(CALC, "B>39900||(A+B)<=0")
+    field(CALC, "(B*1e6)>39900||(A+B*1e6)<=0")
     # If delay + summed_val less than or equal to 0 or summed_val bigger than 39900 then error
 }
 
@@ -138,7 +138,7 @@ record(calc, "$(P)$(R)ERROR")
 {
     field(DESC, "Check Modes")
     field(INPA, "$(P)$(R)SET_MODE CP")
-    field(INPB, "$(P)$(R)_BOTHCHECKS")
+    field(INPB, "$(P)$(R)_BOTHCHECKS CP")
     field(CALC, "A=0||B")
 }
 
@@ -165,7 +165,7 @@ record(seq, "$(P)$(R)_WRITE_DELAY")
     field(DO2, "0")
     # 3) Set delay A
     field(LNK3, "$(P)$(R)$(chan1=A)DelayWriteAO PP")
-    field(DOL3, "$(P)$(R)SUMMED_FINAL")
+    field(DOL3, "$(P)$(R)SUMMED_VALUE")
     #4) *CLS (StatusClearBO)
     field(LNK4, "$(P)$(R)StatusClearBO PP")
     field(DO4, "1")
