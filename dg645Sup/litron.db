@@ -54,16 +54,6 @@ record(calc, "$(P)$(R)SUMMED_VALUE")
     field(PREC, "6")
 }
 
-record(calc, "$(P)$(R)SUMMED_FINAL")
-{
-    field(DESC, "Add dA & dC") # CHANGE THIS
-    field(INPA, "$(P)$(R)SUMMED_VALUE CP")
-    field(INPB, "$(P)$(R)$(chan1=C)DLAYSCAL CP MS")
-    field(CALC, "A+B") # Add SUMMED_VALUE & CDELAY
-    field(EGU, "us")
-    field(PREC, "6")
-}
-
 record(calc, "$(P)$(R)SUMMED_DELAY")
 {
     field(DESC, "Add dA & dC")
@@ -91,9 +81,10 @@ record(calcout, "$(P)$(R)_MODEAUTOCHECK")
     field(INPA, "$(P)$(R)MODE")
     field(INPB, "$(P)$(R)DELAY")
     field(INPC, "$(P)$(R)OFFSET")
-    field(CALC, "A=1?A:(A=2?A:(B>ABS(C)?1:2))")
+    # field(CALC, "A=1?A:(A=2?A:(B>ABS(C)?1:2))") Bring this back for use of auto
     # If mode is 1 or 2 then return 1 or 2
     # Else if DELAY > OFFSET return 1 else 2
+    field(CALC, "A")
     field(OUT, "$(P)$(R)SET_MODE PP")
     field(FLNK, "$(P)$(R)ERROR")
 }
