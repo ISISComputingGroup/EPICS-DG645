@@ -38,16 +38,14 @@ class Dg645LLTTests(unittest.TestCase):
         self.ca.set_pv_value("DELAY", 10)
         self.ca.set_pv_value("OFFSET", 20)
         self.ca.set_pv_value("SET.PROC", "1")
-        self.ca.assert_that_pv_is("ADelayAO", 0.00003) 
+        self.ca.assert_that_pv_is("ADelayAO", 0.00003)
 
     def test_Summed_Delay(self):
         self.ca.set_pv_value("ADelayAO", 0.00001)
         self.ca.set_pv_value("CDelayAO", 0.00002)
         self.ca.assert_that_pv_is("SUMMED_DELAY", 30)
 
-    @parameterized.expand(
-        [(0, 39900, 100, 1)]
-    )
+    @parameterized.expand([(0, 39900, 100, 1)])
     def test_When_In_Error_Can_Not_Set_Delay(self, cdelay, delay, offset, err):
         self.ca.set_pv_value("CDelayAO", cdelay)
         self.ca.set_pv_value("ADelayAO", 0)
@@ -58,18 +56,17 @@ class Dg645LLTTests(unittest.TestCase):
         self.ca.assert_that_pv_is("ERROR", err)
         self.ca.assert_that_pv_is("ADelayAO", 0)
 
-    # Bring back for auto use
-    # def test_Mode_Auto_Change_Mode_To_One(self):
-    #     self.ca.set_pv_value("DELAY", 10)
-    #     self.ca.set_pv_value("OFFSET", 5)
-    #     self.ca.set_pv_value("MODE", "auto")
-    #     self.ca.assert_that_pv_is("SET_MODE", 1)
+    def test_Mode_Auto_Change_Mode_To_One(self):
+        self.ca.set_pv_value("DELAY", 10)
+        self.ca.set_pv_value("OFFSET", 5)
+        self.ca.set_pv_value("MODE", "auto")
+        self.ca.assert_that_pv_is("SET_MODE", 1)
 
-    # def test_Mode_Auto_Change_Mode_To_Two(self):
-    #     self.ca.set_pv_value("DELAY", 5)
-    #     self.ca.set_pv_value("OFFSET", 5)
-    #     self.ca.set_pv_value("MODE", "auto")
-    #     self.ca.assert_that_pv_is("SET_MODE", 2)
+    def test_Mode_Auto_Change_Mode_To_Two(self):
+        self.ca.set_pv_value("DELAY", 5)
+        self.ca.set_pv_value("OFFSET", 5)
+        self.ca.set_pv_value("MODE", "auto")
+        self.ca.assert_that_pv_is("SET_MODE", 2)
 
     @parameterized.expand(
         [(0, 39900, 100, 1), (0.04, 0, 0, 1), (0.00001, -1, 0, 1), (0.00001, -5, 5, 0)]

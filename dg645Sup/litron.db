@@ -16,6 +16,8 @@ record(calc, "$(P)$(R)$(chan1=A)DLAYSCAL")
     field(CALC, "A*B")
     field(EGU, "us")
     field(PREC, "6")
+    field(ASG, "READONLY")
+    info(INTEREST, "HIGH")
 }
 
 record(calc, "$(P)$(R)$(chan2=C)DLAYSCAL")
@@ -26,6 +28,8 @@ record(calc, "$(P)$(R)$(chan2=C)DLAYSCAL")
     field(CALC, "A*B")
     field(EGU, "us")
     field(PREC, "6")
+    field(ASG, "READONLY")
+    info(INTEREST, "HIGH")
 }
 
 record(ai, "$(P)$(R)OFFSET")
@@ -34,6 +38,8 @@ record(ai, "$(P)$(R)OFFSET")
     field(VAL, "0")
     field(EGU, "us")
     field(PREC, "6")
+    info(autosaveFields, "VAL")
+    info(INTEREST, "HIGH")
 }
 
 record(ai, "$(P)$(R)DELAY")
@@ -42,6 +48,8 @@ record(ai, "$(P)$(R)DELAY")
     field(VAL, "0")
     field(EGU, "us")
     field(PREC, "6")
+    info(autosaveFields, "VAL")
+    info(INTEREST, "HIGH")
 }
 
 record(calc, "$(P)$(R)SUMMED_VALUE")
@@ -62,6 +70,8 @@ record(calc, "$(P)$(R)SUMMED_DELAY")
     field(CALC, "A+B")
     field(EGU, "us")
     field(PREC, "6")
+    field(ASG, "READONLY")
+    info(INTEREST, "HIGH")
 }
 
 record(mbbo, "$(P)$(R)MODE")
@@ -72,7 +82,8 @@ record(mbbo, "$(P)$(R)MODE")
     field(TWST, "2")
     field(FLNK, "$(P)$(R)_MODEAUTOCHECK") # When mode changes then check if in mode auto
     field(PINI, "YES")
-    field(VAL, "0")
+    info(autosaveFields, "VAL")
+    info(INTEREST, "HIGH")
 }
 
 record(calcout, "$(P)$(R)_MODEAUTOCHECK")
@@ -81,10 +92,9 @@ record(calcout, "$(P)$(R)_MODEAUTOCHECK")
     field(INPA, "$(P)$(R)MODE")
     field(INPB, "$(P)$(R)DELAY")
     field(INPC, "$(P)$(R)OFFSET")
-    # field(CALC, "A=1?A:(A=2?A:(B>ABS(C)?1:2))") Bring this back for use of auto
+    field(CALC, "A=1?A:(A=2?A:(B>ABS(C)?1:2))") # Bring this back for use of auto
     # If mode is 1 or 2 then return 1 or 2
     # Else if DELAY > OFFSET return 1 else 2
-    field(CALC, "A")
     field(OUT, "$(P)$(R)SET_MODE PP")
     field(FLNK, "$(P)$(R)ERROR")
 }
@@ -131,6 +141,8 @@ record(calc, "$(P)$(R)ERROR")
     field(INPA, "$(P)$(R)SET_MODE CP")
     field(INPB, "$(P)$(R)_BOTHCHECKS CP")
     field(CALC, "A=0||B")
+    info(INTEREST, "HIGH")
+    field(ASG, "READONLY")
 }
 
 record(calcout, "$(P)$(R)SET")
