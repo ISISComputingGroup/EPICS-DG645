@@ -40,18 +40,33 @@ class Dg645LLTTests(unittest.TestCase):
         self.ca.assert_that_pv_is("SUMMED_VALUE", 30)
 
     def test_Summed_Delay(self):
-        self.ca.set_pv_value("ADLAYSCAL", 10)
-        self.ca.set_pv_value("CDLAYSCAL", 20)
-        self.ca.set_pv_value("ADELAYBUTTON", 1)
-        self.ca.set_pv_value("CDELAYBUTTON", 1)
+        self.ca.set_pv_value("ADelayAO", 10)
+        self.ca.set_pv_value("CDelayAO", 0.00002)
+        
         self.ca.assert_that_pv_is("SUMMED_DELAY", 30)
 
-    def test_Summed_Delay(self): # change for full total
-        self.ca.set_pv_value("CDLAY", 0.02)
+    def test_Summed_Final(self):
+        self.ca.set_pv_value("CDelayAO", 0.00001)
+        
         self.ca.set_pv_value("OFFSET", 10)
         self.ca.set_pv_value("DELAY", 30)
-        self.ca.set_pv_value("ADELAYBUTTON", 1)
-        self.ca.assert_that_pv_is("SUMMED_DELAY", 60)
+        self.ca.set_pv_value("MODE", "auto")
+        self.ca.set_pv_value("SET.PROC", "1")
+        self.ca.assert_that_pv_is("ADelayAI", 50) # Test that A delay = cdelay + delay + offset
+        self.ca.assert_that_pv_is("SUMMED_DELAY", 60) # 
+
+    @parameterized.expand(
+        [(0, 39900, 100, 1)]
+    )
+    def test_When_In_Error_Can_Not_Set_Delay(self, cdelay, delay, offset, err):
+        self.ca.set_pv_value("CDelayAO", cdelay)
+        
+        self.ca.set_pv_value("OFFSET", offset)
+        self.ca.set_pv_value("DELAY", delay)
+        self.ca.set_pv_value("MODE", "1")
+        self.ca.set_pv_value("SET.PROC", "1")
+        self.ca.assert_that_pv_is("ERROR", err)
+        self.ca.set_pv_value("ADelayAO", 0)
 
     def test_Mode_Zero_Change_Mode_To_One(self):
         self.ca.set_pv_value("DELAY", 10)
@@ -66,33 +81,31 @@ class Dg645LLTTests(unittest.TestCase):
         self.ca.assert_that_pv_is("SET_MODE", 2)
 
     @parameterized.expand(
-        [(0, 39900, 100, 1), (40000, 0, 0, 1), (10, -1, 0, 1), (10, -5, 5, 0)]
+        [(0, 39900, 100, 1), (0.04, 0, 0, 1), (0.00001, -1, 0, 1), (0.00001, -5, 5, 0)]
     )
     def test_Mode_One_Error_Check(self, cdelay, delay, offset, err):
-        self.ca.set_pv_value("CDELAY:SP", cdelay)
-        self.ca.set_pv_value("CDELAYUNIT:SP", "us")
-        self.ca.set_pv_value("CDELAYBUTTON", 1)
+        self.ca.set_pv_value("CDelayAO", cdelay)
+        
         self.ca.set_pv_value("OFFSET", offset)
         self.ca.set_pv_value("DELAY", delay)
         self.ca.set_pv_value("MODE", "1")
-        self.ca.set_pv_value("ERROR.PROC", "1")
+        self.ca.set_pv_value("SET.PROC", "1")
         self.ca.assert_that_pv_is("ERROR", err)
 
     @parameterized.expand(
         [
             (0, 40000, 0, 1),
-            (40000, 0, 0, 0),
+            (0.04, 0, 0, 0),
             (0, 0, 0, 1),
-            (10, -1, 0, 0),
-            (10, -5, -6, 1),
+            (0.00001, -1, 0, 0),
+            (0.00001, -5, -6, 1),
         ]
     )
     def test_Mode_Two_Error_Check(self, cdelay, delay, offset, err):
-        self.ca.set_pv_value("CDELAY:SP", cdelay)
-        self.ca.set_pv_value("CDELAYUNIT:SP", "us")
-        self.ca.set_pv_value("CDELAYBUTTON", 1)
+        self.ca.set_pv_value("CDelayAO", cdelay)
+        
         self.ca.set_pv_value("OFFSET", offset)
         self.ca.set_pv_value("DELAY", delay)
         self.ca.set_pv_value("MODE", "2")
-        self.ca.set_pv_value("ERROR.PROC", "1")
+        self.ca.set_pv_value("SET.PROC", "1")
         self.ca.assert_that_pv_is("ERROR", err)

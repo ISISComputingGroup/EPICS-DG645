@@ -95,22 +95,8 @@ record(calcout, "$(P)$(R)_MODEAUTOCHECK")
     # If mode is 1 or 2 then return 1 or 2
     # Else if DELAY > OFFSET return 1 else 2
     field(OUT, "$(P)$(R)SET_MODE PP")
-    # field(FLNK, "$(P)$(R)_UPDATE_SETPOINT")
+    field(FLNK, "$(P)$(R)ERROR")
 }
-
-# record(seq, "$(P)$(R)_UPDATE_SETPOINT"){
-
-#     field(LNK1, "$(P)$(R)$(chan1=A)DelayAI.PROC") 
-#     field(DO1, "1")
-
-#     field(LNK2, "$(P)$(R)$(chan2=C)DelayAI.PROC") 
-#     field(DO2, "1")
-
-#     field(LNK3, "$(P)$(R)$(chan1=A)DelayWriteAO PP")
-#     field(DLY3, ".5")
-#     field(DOL3, "$(P)$(R)$(P)$(R)$(chan2=C)DelayAI")
-
-# }
 
 record(longout, "$(P)$(R)SET_MODE") # Send command to device to load settings from specified slot
 {
